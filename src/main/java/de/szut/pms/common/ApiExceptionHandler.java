@@ -3,6 +3,8 @@ package de.szut.pms.common;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+
+import de.szut.pms.employee.EmployeeServiceNotAvailableException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import de.szut.pms.hello.HelloNotFoundException;
+import de.szut.pms.employee.QualificationMissingException;
 
 /**
  * Zentrale Übersetzung von Ausnahmen in HTTP-Antworten nach RFC 9457
@@ -43,6 +46,22 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST, "Die Anfrage enthält ungültige Felder.");
         problem.setTitle("Ungültige Eingabe");
         problem.setProperty("errors", errors);
+        return problem;
+    }
+
+    @ExceptionHandler(QualificationMissingException.class)
+    public ProblemDetail handleQualificationMissing(QualificationMissingException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Nicht vorhandene Qualifikation");
+        return problem;
+    }
+
+    @ExceptionHandler(EmployeeServiceNotAvailableException.class)
+    public ProblemDetail handleEmployeeServiceNotAvailable(EmployeeServiceNotAvailableException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+        problem.setTitle("Employee Service nicht erreichbar");
         return problem;
     }
 }
