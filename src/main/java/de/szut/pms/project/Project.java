@@ -24,25 +24,25 @@ public class Project {
     private Long id;
 
     @Column(nullable = false)
-    private String bezeichnung;
+    private String description;
 
-    @Column(name = "verantwortlicher_mitarbeiter_id", nullable = false)
-    private Long verantwortlicherMitarbeiterId;
+    @Column(name = "responsible_employee_id", nullable = false)
+    private Long responsibleEmployeeId;
 
-    @Column(name = "kunden_id", nullable = false)
-    private Long kundenId;
+    @Column(name = "customer_id", nullable = false)
+    private Long customerId;
 
-    @Column(name = "kunden_zustaendige_person", nullable = false)
-    private String kundenZustaendigePerson;
+    @Column(name = "customer_service_representative", nullable = false)
+    private String customerServiceRepresentative;
 
-    @Column(length = 2000) // Weil Kommentare sehr lang sein können
-    private String kommentar;
-
-    @Column(nullable = false)
-    private LocalDate startdatum;
+    @Column(length = 2000) // Weil Kommentare sehr lang sein kann
+    private String comment;
 
     @Column(nullable = false)
-    private LocalDate enddatum;
+    private LocalDate startDate;
+
+    @Column(nullable = false)
+    private LocalDate endDate;
 
     // cascade + orphanRemoval: Beim Löschen des Projekts verschwinden die Zuordnungen,
     // die Mitarbeiter sind danach wieder zuweisbar.
