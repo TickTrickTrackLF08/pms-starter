@@ -20,7 +20,7 @@ public class EmployeeQualificationService {
      * @param employeeId    des abzugleichenden Mitarbeiters
      * @param qualification gewünschte Qualifikation für das Projekt
      */
-    public void validateQualification(Long employeeId, String qualification) {
+    private void validateQualification(Long employeeId, String qualification) {
         EmployeeDto employee = employeeClient.findById(employeeId);
 
         for (SkillDto skills : employee.skillSet()) {
@@ -30,13 +30,15 @@ public class EmployeeQualificationService {
         }
         throw new QualificationMissingException(employeeId, qualification);
     }
+
+
+    public void validateEmployees(List<ProjectEmployee> employees) {
+        for (ProjectEmployee employee : employees) {
+            validateQualification(employee.getEmployeeId(), employee.getQualification());
+        }
+    }
+
+    public void validateEmployees(Project project) {
+        validateEmployees(project.getMitarbeiter());
+    }
 }
-    //Erstmal als Vorlage, weiß ja nicht, wie die Liste mit dem Mitarbeitern übergeben wird
-    // --- TO BE CONTINUED ---
-
-//    public void checkAllEmployeesAreQualified(List<ProjectEmployeeDto> employees){
-//        for(ProjectEmployeeDto employee: employees){
-//            validateQualification(employee.id(), employee.qualification());
-//        }
-//    }
-
