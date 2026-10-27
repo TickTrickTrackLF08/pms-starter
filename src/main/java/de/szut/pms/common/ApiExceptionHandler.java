@@ -3,6 +3,8 @@ package de.szut.pms.common;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import de.szut.pms.project.ProjectNotFoundException;
+import de.szut.pms.projectemployee.ProjectEmployeeNotFoundException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,22 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(HelloNotFoundException.class)
     public ProblemDetail handleNotFound(HelloNotFoundException ex) {
+        ProblemDetail problem =
+                ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setTitle("Nicht gefunden");
+        return problem;
+    }
+
+    @ExceptionHandler(ProjectEmployeeNotFoundException.class)
+    public ProblemDetail handleNotFound(ProjectEmployeeNotFoundException ex) {
+        ProblemDetail problem =
+                ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setTitle("Nicht gefunden");
+        return problem;
+    }
+
+    @ExceptionHandler(ProjectNotFoundException.class)
+    public ProblemDetail handleNotFound(ProjectNotFoundException ex) {
         ProblemDetail problem =
                 ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setTitle("Nicht gefunden");
