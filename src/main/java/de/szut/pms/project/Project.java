@@ -9,7 +9,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -35,7 +34,7 @@ public class Project {
     @Column(name = "customer_service_representative", nullable = false)
     private String customerServiceRepresentative;
 
-    @Column(length = 2000) // Weil Kommentare sehr lang sein kann
+    @Column(length = 2000) //Because comments can be very long
     private String comment;
 
     @Column(nullable = false)
@@ -44,9 +43,9 @@ public class Project {
     @Column(nullable = false)
     private LocalDate endDate;
 
-    // cascade + orphanRemoval: Beim Löschen des Projekts verschwinden die Zuordnungen,
-    // die Mitarbeiter sind danach wieder zuweisbar.
+    // cascade + orphanRemoval: When the project is deleted, the assignments disappear,
+    // after that, the employees can be reassigned
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProjectEmployee> mitarbeiter = new ArrayList<>();
+    private List<ProjectEmployee> employee = new ArrayList<>();
 
 }
