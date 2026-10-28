@@ -47,8 +47,6 @@ public class AuthentikSecurityConfig {
                         })
                 )
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/hello").authenticated()
-                        .requestMatchers("/hello/**").authenticated()
                         .requestMatchers("/swagger/**").permitAll()
                         .requestMatchers("/swagger").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
