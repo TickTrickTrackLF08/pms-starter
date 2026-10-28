@@ -8,9 +8,8 @@ public class ProjectEmployeeMapper {
     public ProjectEmployeeDTO toDTO(ProjectEmployee entity) {
         ProjectEmployeeDTO dto = new ProjectEmployeeDTO();
         dto.setId(entity.getId());
-        dto.setProjectId(entity.getProject().getId());
         dto.setEmployeeId(entity.getEmployeeId());
-        dto.setQualificationId(entity.getQualificationID());
+        dto.setQualificationID(entity.getQualificationID());
         return dto;
     }
 

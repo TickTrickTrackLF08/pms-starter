@@ -3,8 +3,6 @@ package de.szut.pms.common;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import de.szut.pms.project.ProjectNotFoundException;
-import de.szut.pms.projectemployee.ProjectEmployeeNotFoundException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import de.szut.pms.hello.HelloNotFoundException;
+import org.springframework.web.client.ResourceAccessException;
 
 /**
  * Zentrale Übersetzung von Ausnahmen in HTTP-Antworten nach RFC 9457
@@ -35,16 +34,8 @@ public class ApiExceptionHandler {
         return problem;
     }
 
-    @ExceptionHandler(ProjectEmployeeNotFoundException.class)
-    public ProblemDetail handleNotFound(ProjectEmployeeNotFoundException ex) {
-        ProblemDetail problem =
-                ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problem.setTitle("Nicht gefunden");
-        return problem;
-    }
-
-    @ExceptionHandler(ProjectNotFoundException.class)
-    public ProblemDetail handleNotFound(ProjectNotFoundException ex) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ProblemDetail handleNotFound(ResourceNotFoundException ex) {
         ProblemDetail problem =
                 ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setTitle("Nicht gefunden");
@@ -64,3 +55,4 @@ public class ApiExceptionHandler {
         return problem;
     }
 }
+

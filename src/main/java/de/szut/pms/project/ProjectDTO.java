@@ -18,5 +18,5 @@ public class ProjectDTO {
      private String comment;
      private LocalDate startDate;
      private LocalDate endDate;
-     private List<ProjectEmployeeDTO> employees;
+     private List<ProjectEmployeeDTO> projectEmployees;
 }

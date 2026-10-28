@@ -1,6 +1,7 @@
 package de.szut.pms.project;
 
-public class ProjectNotFoundException extends RuntimeException {
+import de.szut.pms.common.ResourceNotFoundException;
 
-    public ProjectNotFoundException(Long id){super("Es gibt keinen Eintrag mit der Kennung " + id + ".");}
+public class ProjectNotFoundException extends ResourceNotFoundException {
+    public ProjectNotFoundException(Long id){super("Es gibt keinen Project Eintrag mit der Kennung " + id + ".");}
 }
