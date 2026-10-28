@@ -11,15 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/projects") //Bleibt es bei diesem Namen, finde ich sinnvoll??????
+@RequestMapping("/projects")
 public class ProjectController {
 
-    private final ProjectService projectService;
+    private final ProjectService service;
 
-    public ProjectController(ProjectService projectService) {
-        this.projectService = projectService;
-    }
-
+    public ProjectController(ProjectService service) {this.service = service;}
 
     @Operation(summary = "Delete a project")
     @ApiResponse(responseCode = "204", description = "Project successfully deleted")
@@ -27,7 +24,7 @@ public class ProjectController {
     @ApiResponse(responseCode = "401", description = "Invalid JWT")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id){
-        projectService.deleteById(id);
+        service.deleteById(id);
         return ResponseEntity.noContent().build(); //mit .ok() würde 200 returnt
     }
 
