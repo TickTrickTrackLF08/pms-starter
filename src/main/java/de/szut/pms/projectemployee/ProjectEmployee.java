@@ -25,5 +25,5 @@ public class ProjectEmployee {
     private Long employeeId;
 
     @Column(nullable = false)
-    private int qualificationID;
+    private Long qualificationID;
 }

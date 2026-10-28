@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import de.szut.pms.hello.HelloNotFoundException;
+import org.springframework.web.client.ResourceAccessException;
 
 /**
  * Zentrale Übersetzung von Ausnahmen in HTTP-Antworten nach RFC 9457
@@ -33,6 +34,14 @@ public class ApiExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ProblemDetail handleNotFound(ResourceNotFoundException ex) {
+        ProblemDetail problem =
+                ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setTitle("Nicht gefunden");
+        return problem;
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidation(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new LinkedHashMap<>();
@@ -46,3 +55,4 @@ public class ApiExceptionHandler {
         return problem;
     }
 }
+
