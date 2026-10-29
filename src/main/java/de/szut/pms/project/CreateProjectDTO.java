@@ -20,6 +20,7 @@ public record CreateProjectDTO(
         Long customerId,
 
         @NotNull(message = "Ein Ansprechpartner beim Kunden muss angegeben werden.")
+        @Size(min = 1, message = "Ein Ansprechpartner beim Kunden muss angegeben werden.")
         String customerServiceRepresentative,
 
         String comment,
@@ -27,7 +28,7 @@ public record CreateProjectDTO(
         @NotNull(message = "Das Startdatum muss angegeben werden.")
         LocalDate startDate,
 
-        @NotNull
+        @NotNull(message = "Das Enddatum muss angegeben werden.")
         LocalDate endDate,
 
         @Valid
