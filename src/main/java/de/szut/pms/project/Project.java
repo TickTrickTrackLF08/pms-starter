@@ -18,6 +18,11 @@ import java.util.List;
 @NoArgsConstructor
 public class Project {
 
+    public void addEmployee(ProjectEmployee projectEmployee) {
+        employee.add(projectEmployee);
+        projectEmployee.setProject(this);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,7 +50,11 @@ public class Project {
 
     // cascade + orphanRemoval: When the project is deleted, the assignments disappear,
     // after that, the employees can be reassigned
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "project",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<ProjectEmployee> employee = new ArrayList<>();
 
 }

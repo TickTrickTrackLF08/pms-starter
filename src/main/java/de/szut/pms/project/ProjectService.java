@@ -1,6 +1,9 @@
 package de.szut.pms.project;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ProjectService {
@@ -13,5 +16,17 @@ public class ProjectService {
         this.mapper = mapper;
     }
 
+    @Transactional
+    public ProjectDTO create(CreateProjectDTO dto) {
+        Project saved = repository.save(mapper.toEntity(dto));
+        return mapper.toDTO(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProjectDTO> findAll() {
+        return repository.findAll().stream()
+                .map(mapper::toDTO)
+                .toList();
+    }
 
 }
