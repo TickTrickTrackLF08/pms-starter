@@ -1,5 +1,7 @@
 package de.szut.pms.employee;
 
+import de.szut.pms.project.Project;
+import de.szut.pms.projectemployee.ProjectEmployee;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,33 +14,51 @@ public class EmployeeQualificationService {
         this.employeeClient = employeeClient;
     }
 
+
     /**
      * Zu der Task: 'Sicherstellen, dass bei einem Fehler das Projekt nicht entsteht'
      * Wird beim Aufruf der Methode sichergestellt, da diese eine Exception wirft und abbricht,
      * wenn die Qualifikation nicht vorhanden ist
      *
-     * @param employeeId    des abzugleichenden Mitarbeiters
-     * @param qualification gewünschte Qualifikation für das Projekt
+     *
+     * Für das Zuweisen eines einzelnen Mitarbeiters zu einem Projekt.
+     * @param projectEmployee der Mitarbieter, der einem neuem Projekt zugeordnet werden soll.
      */
-    private void validateQualification(Long employeeId, String qualification) {
+    public void validateQualification(ProjectEmployee projectEmployee){
+        validateQualification(projectEmployee.getEmployeeId(), projectEmployee.getQualificationID());
+    }
+    /**
+     * Für das Zuweisen eines einzelnen Mitarbeiter (anhand der Id und Qualifikation und nicht der Employee-Entität)
+     *
+     * @param employeeId    des abzugleichenden Mitarbeiters
+     * @param qualificationID gewünschte QualifikationID für das Projekt
+     */
+    public void validateQualification(Long employeeId, Long qualificationID) {
         EmployeeDto employee = employeeClient.findById(employeeId);
 
-        for (SkillDto skills : employee.skillSet()) {
-            if (skills.skill().equalsIgnoreCase(qualification)) {
+        for (SkillDto skill : employee.skillSet()) {
+            if (skill.id().equals(qualificationID)) {
                 return;
             }
         }
-        throw new QualificationMissingException(employeeId, qualification);
+        throw new QualificationMissingException(employeeId, qualificationID);
     }
 
-
+    /**
+     * Für das Anlegen eines Projektes.
+     * @param employees die Mitarbeiterliste, des anzulegenden Projektes
+     */
     public void validateEmployees(List<ProjectEmployee> employees) {
         for (ProjectEmployee employee : employees) {
-            validateQualification(employee.getEmployeeId(), employee.getQualification());
+            validateQualification(employee.getEmployeeId(), employee.getQualificationID());
         }
     }
 
+    /**
+     * Für das Anlegen eines Projektes
+     * @param project welches angelegt werden soll
+     */
     public void validateEmployees(Project project) {
-        validateEmployees(project.getMitarbeiter());
+        validateEmployees(project.getEmployee());
     }
 }

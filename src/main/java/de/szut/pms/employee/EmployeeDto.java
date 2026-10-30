@@ -13,4 +13,3 @@ public record EmployeeDto(
         List<SkillDto> skillSet
 ) {
 }
-//Beim Empfanger der Antwort vom Employee-Service, Sping wandelt das JSON in das DTO um

@@ -5,7 +5,7 @@ import org.springframework.web.client.RestClient;
 //import org.springframework.web.client.ResourceAccessException
 
 @Component
-public class EmployeeRestClient implements EmployeeClient {
+public class EmployeeRESTClient implements EmployeeClient {
 
     private final RestClient restClient = RestClient.create();
 
@@ -31,11 +31,4 @@ public class EmployeeRestClient implements EmployeeClient {
 }
 
 
-
-// private final EmployeeMapper employeeMapper;
-
-//    public EmployeeRestClient(RestClient restClient/**, EmployeeMapper employeeMapper*/) {
-//        this.restClient = restClient;
-//      //  this.employeeMapper = employeeMapper;
-//    }
 
