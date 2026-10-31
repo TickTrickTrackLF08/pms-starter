@@ -1,5 +1,6 @@
 package de.szut.pms.security;
 
+import de.szut.pms.common.InvalidTokenHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -31,21 +32,29 @@ public class AuthentikSecurityConfig {
     @Value("${authentik.jwk-set-uri}")
     private String jwkSetUri;
 
+    private final InvalidTokenHandler tokenInvalidException; //Verständle Fehlermeldung bei Falscher Anmeldung
+
     @Bean
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
     }
+
+    public AuthentikSecurityConfig(InvalidTokenHandler tokenInvalidException) {
+        this.tokenInvalidException = tokenInvalidException;
+    }
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
-                .oauth2ResourceServer(oauth2 -> oauth2
+                .oauth2ResourceServer(oauth2 -> oauth2.authenticationEntryPoint(tokenInvalidException)
                         .jwt(jwt -> {
 
                         })
                 )
+
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/swagger/**").permitAll()
                         .requestMatchers("/swagger").permitAll()
