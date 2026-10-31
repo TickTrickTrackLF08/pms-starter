@@ -3,16 +3,19 @@ package de.szut.pms.common;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import io.micrometer.core.ipc.http.HttpSender;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import de.szut.pms.hello.HelloNotFoundException;
-import org.springframework.web.client.ResourceAccessException;
+
+import javax.naming.AuthenticationException;
 
 /**
  * Zentrale Übersetzung von Ausnahmen in HTTP-Antworten nach RFC 9457
@@ -54,5 +57,6 @@ public class ApiExceptionHandler {
         problem.setProperty("errors", errors);
         return problem;
     }
+
 }
 
