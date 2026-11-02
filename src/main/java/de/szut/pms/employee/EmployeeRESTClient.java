@@ -7,17 +7,25 @@ import org.springframework.web.client.RestClient;
 @Component
 public class EmployeeRESTClient implements EmployeeClient {
 
+    private final TokenForwarding token;
+
+    public EmployeeRESTClient(TokenForwarding token){
+        this.token = token;
+    }
+
     private final RestClient restClient = RestClient.create();
 
     @Value("${employee-service.base-url}")
     private String employeeURL;
 
+
     @Override
     public EmployeeDto findById(Long id) {
         try {
+            String key = token.getToken();
             EmployeeDto employee = restClient.get()    //HTTP Request
                     .uri(employeeURL + "/employees/" + id)
-                    /** .header("Authorization", "Bearer "+ token) Lucas ??? */
+                    .header("Authorization", "Bearer "+ key)
                     .retrieve() //sendet request
                     .body(EmployeeDto.class);   //JACKSON wandelt es in das DTO um
             return employee;
