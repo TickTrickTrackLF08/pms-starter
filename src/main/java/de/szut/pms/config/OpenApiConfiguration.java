@@ -2,11 +2,16 @@ package de.szut.pms.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.*;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import jakarta.servlet.ServletContext;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -53,5 +58,49 @@ public class OpenApiConfiguration {
                                                 .bearerFormat("JWT")
                                 )
                 );
+    }
+
+    //Extend Swagger with Token Authentication
+    @Bean
+    public OpenApiCustomizer unauthorizedResponseCustomizer() {
+        return openApi -> {
+            if (openApi.getPaths() == null) {
+                return;
+            }
+
+            Components components = openApi.getComponents();
+            if (components == null) {
+                components = new Components();
+                openApi.setComponents(components);
+            }
+
+            //The problem schema
+            Schema<?> problemDetail = new ObjectSchema()
+                    .addProperty("type", new StringSchema().format("uri"))
+                    .addProperty("title", new StringSchema())
+                    .addProperty("status", new IntegerSchema().format("int32"))
+                    .addProperty("detail", new StringSchema())
+                    .addProperty("instance", new StringSchema().format("uri"));
+            components.addSchemas("ProblemDetail", problemDetail);
+
+            // Error blueprint
+            ApiResponse unauthorized = new ApiResponse()
+                    .description("No, invalid, or expired token")
+                    .content(new Content().addMediaType("application/problem+json",
+                            new MediaType().schema(new Schema<>().$ref("#/components/schemas/ProblemDetail"))));
+            components.addResponses("Unauthorized", unauthorized);
+
+            ApiResponse unauthorizedRef = new ApiResponse().$ref("#/components/responses/Unauthorized");
+
+            // Append 401 to every path and every operation
+            openApi.getPaths().values().forEach(pathItem -> {
+                for (Operation operation : pathItem.readOperations()) {
+                    if (operation.getResponses() == null) {
+                        operation.setResponses(new ApiResponses());
+                    }
+                    operation.getResponses().putIfAbsent("401", unauthorizedRef);
+                }
+            });
+        };
     }
 }

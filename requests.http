@@ -1,0 +1,69 @@
+### Projekt ohne Mitarbeiter erstellen
+POST http://localhost:8080/projects
+Content-Type: application/json
+
+{
+  "description": "Website-Relaunch",
+  "responsibleEmployeeId": 12,
+  "customerId": 5,
+  "customerServiceRepresentative": "Anna Müller",
+  "comment": "Neuer Webauftritt",
+  "startDate": "2026-11-01",
+  "endDate": "2027-02-28",
+  "projectEmployees": [ ]
+}
+
+
+### Projekt mit einem Mitarbeiter, erstellen
+POST http://localhost:8080/projects
+Content-Type: application/json
+
+{
+  "description": "Website-Relaunch",
+  "responsibleEmployeeId": 12,
+  "customerId": 5,
+  "customerServiceRepresentative": "Anna Müller",
+  "comment": "Neuer Webauftritt",
+  "startDate": "2026-11-01",
+  "endDate": "2027-02-28",
+  "projectEmployees": [
+    {
+      "employeeId": 4343,
+      "qualificationID": 3434
+    }
+  ]
+}
+
+
+### Projekt mit mehreren Mitarbeitern erstellen
+POST http://localhost:8080/projects
+Content-Type: application/json
+
+{
+  "description": "Website-Relaunch",
+  "responsibleEmployeeId": 12,
+  "customerId": 5,
+  "customerServiceRepresentative": "Anna Müller",
+  "comment": "Neuer Webauftritt",
+  "startDate": "2026-11-01",
+  "endDate": "2027-02-28",
+  "projectEmployees": [
+    {
+      "employeeId": 4343,
+      "qualificationID": 3434
+    },
+    {
+      "employeeId": 4344,
+      "qualificationID": 3435
+    },
+    {
+      "employeeId": 4345,
+      "qualificationID": 3436
+    }
+  ]
+}
+
+
+### Alle Projekte abrufen
+GET http://localhost:8080/projects
+Accept: application/json
