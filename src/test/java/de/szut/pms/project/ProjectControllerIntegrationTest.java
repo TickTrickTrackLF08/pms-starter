@@ -30,14 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser
 class ProjectControllerIntegrationTest extends AbstractIntegrationTest {
 
-    @MockitoBean
-    private EmployeeClient employeeClient;
 
-    @Autowired
-    private ProjectRepository projectRepository;
-
-    @Autowired
-    private ProjectService projectService;
 
     @BeforeEach
     void cleanUpProjects() {
@@ -84,6 +77,7 @@ class ProjectControllerIntegrationTest extends AbstractIntegrationTest {
             }
             """;
 
+    //entspricht Erfolgsfall für Mitarbeiterqualifikation
     @Test
     void createProjectSuccessfully() throws Exception {
         long countBefore = projectRepository.count();
@@ -105,6 +99,7 @@ class ProjectControllerIntegrationTest extends AbstractIntegrationTest {
         assertEquals(countBefore + 1, projectRepository.count());
     }
 
+    //ennspricht Test für die Mitarbeiterqualifikation, Qualifikations nicht vorhanden
     @Test
     void createProjectWithMissingEmployeeQualification() throws Exception {
         long countBefore = projectRepository.count();
@@ -126,6 +121,7 @@ class ProjectControllerIntegrationTest extends AbstractIntegrationTest {
         assertEquals(countBefore, projectRepository.count());
     }
 
+    //entspricht Test für die Mitarbeiterqualifikation, EmployeeService nicht erreichbar
     @Test
     void createProjectWhenEmployeeServiceIsUnavailableForProjectEmployee()
             throws Exception {
