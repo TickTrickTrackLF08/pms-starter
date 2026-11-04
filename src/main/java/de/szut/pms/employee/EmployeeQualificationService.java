@@ -1,11 +1,7 @@
 package de.szut.pms.employee;
 
 import de.szut.pms.common.ResourceNotFoundException;
-import de.szut.pms.project.Project;
-import de.szut.pms.projectemployee.ProjectEmployee;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class EmployeeQualificationService {
@@ -13,19 +9,6 @@ public class EmployeeQualificationService {
 
     public EmployeeQualificationService(EmployeeClient employeeClient) {
         this.employeeClient = employeeClient;
-    }
-
-
-    /**
-     * Regarding the task: “Ensure that the project is not created if an error occurs”
-     * This is ensured when the method is called, as it throws an exception and terminates
-     * if the qualification is not present
-     *
-     * For assigning a single employee to a project.
-     * @param projectEmployee the employee to be assigned to a new project.
-     */
-    public void validateQualification(ProjectEmployee projectEmployee){
-        validateQualification(projectEmployee.getEmployeeId(), projectEmployee.getQualificationID());
     }
 
     /**
@@ -46,16 +29,6 @@ public class EmployeeQualificationService {
     }
 
     /**
-     * For creating a project.
-     * @param employees the list of employees for the project to be created
-     */
-    public void validateEmployees(List<ProjectEmployee> employees) {
-        for (ProjectEmployee employee : employees) {
-            validateQualification(employee.getEmployeeId(), employee.getQualificationID());
-        }
-    }
-
-    /**
      * Checks whether an employee exists without verifying any qualifications.
      */
     public void validateEmployee(Long employeeId) {
@@ -68,11 +41,4 @@ public class EmployeeQualificationService {
         }
     }
 
-    /**
-     * For creating a project
-     * @param project the project to be created
-     */
-    public void validateEmployees(Project project) {
-        validateEmployees(project.getEmployees());
-    }
 }

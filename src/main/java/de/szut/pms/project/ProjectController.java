@@ -1,6 +1,6 @@
 package de.szut.pms.project;
 
-import de.szut.pms.employee.AddProjectEmployeeDTO;
+import de.szut.pms.projectemployee.CreateProjectEmployeeDTO;
 import de.szut.pms.projectemployee.ProjectEmployeeDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -78,9 +78,10 @@ public class ProjectController {
                         """)
             )
     )
-    @ApiResponse(responseCode = "409", description = "Ein Mitarbeiter besitzt nicht die erforderliche Qualifikation")
-    @ApiResponse(responseCode = "503", description = "Der Employee-Service ist nicht erreichbar")
-    @ApiResponse(responseCode = "409", description="Mindestens ein Mitarbeiter ist im angegebenen Zeitraum bereits einem anderen Projekt zugeordnet")
+
+
+    @ApiResponse(responseCode = "503", description = "The Employee Service is unavailable")
+    @ApiResponse(responseCode = "409", description="An employee does not have the required qualifications or at least one employee is already assigned to another project during the specified time period")
     @PostMapping
     public ResponseEntity<ProjectDTO> create(@RequestBody @Valid CreateProjectDTO dto) {
         ProjectDTO created = service.create(dto);
@@ -192,7 +193,7 @@ public class ProjectController {
     @Operation(summary = "Get all projects")
     @ApiResponse(responseCode = "200", description = "Projects retrieved successfully", content = @Content(
                     mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = ProjectOverviewDTO.class)),
+                    array = @ArraySchema(schema = @Schema(implementation = ProjectDTO.class)),
                     examples = @ExampleObject(value = """
                         [
                           {
@@ -213,14 +214,21 @@ public class ProjectController {
                             "customerServiceRepresentative": "Jonas Becker",
                             "comment": "Move to the new CRM system",
                             "startDate": "2027-01-15",
-                            "endDate": "2027-06-30"
+                            "endDate": "2027-06-30",
+                            "projectEmployees": [
+                            {
+                              "id": 1,
+                              "employeeId": 1,
+                              "qualificationID": 1
+                            }
+                          ]
                           }
                         ]
                         """)
             )
     )
     @GetMapping
-    public ResponseEntity<List<ProjectOverviewDTO>> findAll() {
+    public ResponseEntity<List<ProjectDTO>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
@@ -278,9 +286,9 @@ public class ProjectController {
 
     @Operation(summary = "Update the details of a project")
     @ApiResponse(responseCode = "200", description = "Project Successfully Updated")
-    @ApiResponse(responseCode = "400", description = "Invalid input data")
     @ApiResponse(responseCode = "404", description = "Project or referenced resource not found")
-    @ApiResponse(responseCode = "409", description = "Der Mitarbeiter wird während dieses Zeitraums einem anderen Projekt zugewiesen.")
+    @ApiResponse(responseCode = "409", description = "During this period, the employee will be assigned to another project.")
+    @ApiResponse(responseCode = "503", description = "The Employee Service is unavailable.")
     @PutMapping("/{id}")
     public ResponseEntity<ProjectDTO> update(
             @PathVariable Long id,
@@ -293,12 +301,13 @@ public class ProjectController {
     @Operation(summary = "Add an employee to a project")
     @ApiResponse(responseCode = "200", description = "Employee successfully added")
     @ApiResponse(responseCode = "404", description = "Project or employee not found")
-    @ApiResponse(responseCode = "400", description = "Invalid request or employee already assigned")
-    @ApiResponse(responseCode = "409", description = "The employee is assigned to another project during that period.")
+    @ApiResponse(responseCode = "400", description = "Invalid request: missing employeeId or qualificationID")
+    @ApiResponse(responseCode = "409", description = "The employee is assigned to another project during that period, or already assigned to this project, or does not have the required qualification")
+    @ApiResponse(responseCode = "503", description = "The Employee Service is unavailable.")
     @PostMapping("/{projectId}/employees")
     public ResponseEntity<ProjectDTO> addEmployeeToProject(
             @PathVariable Long projectId,
-            @RequestBody @Valid AddProjectEmployeeDTO dto) {
+            @RequestBody @Valid CreateProjectEmployeeDTO dto) {
 
         ProjectDTO updatedProject =
                 service.addEmployeeToProject(projectId, dto);

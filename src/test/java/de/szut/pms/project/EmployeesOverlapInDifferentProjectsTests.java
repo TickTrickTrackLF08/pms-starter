@@ -2,7 +2,6 @@ package de.szut.pms.project;
 
 import de.szut.pms.employee.EmployeeDto;
 import de.szut.pms.employee.SkillDto;
-import de.szut.pms.project.Project;
 import de.szut.pms.projectemployee.ProjectEmployee;
 import de.szut.pms.testcontainers.AbstractIntegrationTest;
 import org.junit.jupiter.api.Assertions;
@@ -20,11 +19,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-public class EmployeesOverlapInDifferentProjects extends AbstractIntegrationTest {
+public class EmployeesOverlapInDifferentProjectsTests extends AbstractIntegrationTest {
     private final String validRequest = """
         {
           "description": "Testprojekt für Zeitüberschneidung",
-          "responsibleEmployeeId": 12,
+          "responsibleEmployeeId": 1,
           "customerId": 5,
           "customerServiceRepresentative": "Anna Müller",
           "comment": "Test",
@@ -41,15 +40,17 @@ public class EmployeesOverlapInDifferentProjects extends AbstractIntegrationTest
 
     @BeforeEach
     void setup() {
+        // Project lead
+        when(employeeClient.findById(1L)).thenReturn(new EmployeeDto(
+                1L,
+                "Musterfrau", "Erika", "", "", "", "",
+                List.of()));
+
+        // Project employee 
         when(employeeClient.findById(12L)).thenReturn(new EmployeeDto(
-                                12L,
-                                "Mustermann",
-                                "Max",
-                                "",
-                                "",
-                                "",
-                                "",
-                                List.of(new SkillDto("Qualifikation 3",3L))));
+                12L,
+                "Mustermann", "Max", "", "", "", "",
+                List.of(new SkillDto("Qualifikation 3", 3L))));
     }
 
     @Test

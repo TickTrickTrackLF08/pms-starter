@@ -72,7 +72,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(ProjectNotFoundException.class)
     public ProblemDetail handleProjectNotFound(ProjectNotFoundException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problem.setTitle("projekt not found");
+        problem.setTitle("Project not found");
         return problem;
     }
 
@@ -97,7 +97,7 @@ public class ApiExceptionHandler {
     public ProblemDetail handleProjectsEmployeeOverlap(EmployeeTimeConflictException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.CONFLICT, ex.getMessage());
-        problem.setTitle("Mitarbeiter gleichzeitig in 2 Projekten");
+        problem.setTitle("Employees working on two projects at the same time");
         return problem;
     }
 
@@ -106,7 +106,7 @@ public class ApiExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.CONFLICT, ex.getMessage());
 
-        problem.setTitle("Mitarbeiter bereits im Projekt zugeordnet");
+        problem.setTitle("Employees have already been assigned to the project");
 
         return problem;
     }
@@ -121,7 +121,9 @@ public class ApiExceptionHandler {
         body.put("message", ex.getMessage());
 
         return ResponseEntity.badRequest().body(body);
-    }
+        }
+
+
 
 }
 

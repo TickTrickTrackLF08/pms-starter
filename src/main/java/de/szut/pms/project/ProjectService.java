@@ -2,7 +2,6 @@ package de.szut.pms.project;
 
 import de.szut.pms.customer.CustomerClient;
 import de.szut.pms.customer.CustomerNotFoundException;
-import de.szut.pms.employee.AddProjectEmployeeDTO;
 import de.szut.pms.employee.EmployeeProjectDTO;
 import de.szut.pms.employee.EmployeeProjectsDTO;
 import de.szut.pms.employee.EmployeeQualificationService;
@@ -24,8 +23,6 @@ public class ProjectService {
     private final EmployeeQualificationService qualificationService;
     private final ProjectEmployeeAvailabilityService availabilityService;
 
-
-
     public ProjectService(ProjectRepository repository, ProjectMapper mapper, CustomerClient customerClient, EmployeeQualificationService qualificationService, ProjectEmployeeAvailabilityService availabilityService) {
         this.repository = repository;
         this.mapper = mapper;
@@ -33,7 +30,6 @@ public class ProjectService {
         this.qualificationService = qualificationService;
         this.availabilityService = availabilityService;
     }
-
 
     @Transactional
     public ProjectDTO create(CreateProjectDTO dto) {
@@ -96,9 +92,9 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProjectOverviewDTO> findAll() {
+    public List<ProjectDTO> findAll() {
         return repository.findAll().stream()
-                .map(mapper::toOverviewDTO)
+                .map(mapper::toDTO)
                 .toList();
     }
 
@@ -168,17 +164,17 @@ public class ProjectService {
     }
 
     @Transactional
-    public ProjectDTO addEmployeeToProject(Long projectId, AddProjectEmployeeDTO dto) {
+    public ProjectDTO addEmployeeToProject(Long projectId, CreateProjectEmployeeDTO dto) {
 
-        // Prüfen, ob das Projekt existiert
+        // Check whether the project exists
         Project project = repository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException(projectId));
 
-        // Prüfen, ob Mitarbeiter bereits zugeordnet ist
+        // Check whether an employee has already been assigned
         boolean alreadyAssigned = project.getEmployees().stream()
                 .anyMatch(employee ->
                         employee.getEmployeeId().equals(dto.employeeId()));
-        // Falls der Mitarbeiter bereits zugeordnet ist, wird eine Exception geworfen
+        // If the employee is already assigned, an exception is thrown
         if (alreadyAssigned) {
             throw new EmployeeAlreadyAssignedException(
                     dto.employeeId(),
@@ -186,7 +182,7 @@ public class ProjectService {
             );
         }
 
-        // Prüfen ob der Mitarbeiter existiert und die angegebene Qualifikation besitzt
+        // Check whether the employee exists and has the specified qualification
         qualificationService.validateQualification(
                 dto.employeeId(),
                 dto.qualificationID()
@@ -198,7 +194,7 @@ public class ProjectService {
 
         project.addEmployee(projectEmployee);
 
-        // Prüfen ob der Mitarbeiter im Zeitraum des Projekts bereits in einem anderen Projekt arbeitet
+        // Check whether the employee is already working on another project during the project period
         availabilityService.validateNoTimeOverlap(project);
 
         Project saved = repository.save(project);
@@ -212,20 +208,20 @@ public class ProjectService {
         Project project = repository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException(id));
 
-        // Kunde prüfen
+        // Verify customer
         if (!customerClient.existsById(dto.customerId())) {
             throw new CustomerNotFoundException(dto.customerId());
         }
 
-        // Projektleiter prüfen
+        // Project managers should review
         qualificationService.validateEmployee(
                 dto.responsibleEmployeeId()
         );
 
-        // Projektdaten aktualisieren
+        // Update Project Data
         mapper.updateEntity(project, dto);
 
-        // Verfügbarkeit mit den aktualisierten Daten prüfen
+        // Check availability using the updated data
         availabilityService.validateNoTimeOverlap(project);
 
         Project updated = repository.save(project);
