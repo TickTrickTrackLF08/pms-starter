@@ -30,18 +30,20 @@ public class AbstractIntegrationTest {
     @Autowired
     protected HelloRepository helloRepository;
 
-    @MockitoBean
-    protected EmployeeClient employeeClient;
-
     @Autowired
     protected ProjectRepository projectRepository;
 
     @Autowired
     protected ProjectEmployeeRepository projectEmployeeRepository;
 
+    @MockitoBean
+    protected EmployeeClient employeeClient;
+
+
     @Autowired
     protected ProjectService projectService;
 
+    @BeforeEach
     void setUp() {
         projectEmployeeRepository.deleteAll();
         projectRepository.deleteAll();

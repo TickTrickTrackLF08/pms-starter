@@ -17,7 +17,7 @@ public record CreateProjectDTO(
         @Size(min = 10, message = "Die Beschreibung muss mindestens 10 Zeichen lang sein.")
         String description,
 
-        @Schema(description = "ID des verantwortlichen internen Mitarbeiters", example = "12")
+        @Schema(description = "ID des verantwortlichen internen Mitarbeiters", example = "1")
         @NotNull(message = "Ein verantwortlicher interner Mitarbeiter muss angegeben werden.")
         Long responsibleEmployeeId,
 
@@ -44,11 +44,11 @@ public record CreateProjectDTO(
         @Schema(description = "Mitarbeiter, die dem Projekt zugeordnet werden", example = """
                 [
                   {
-                    "employeeId": 12,
-                    "qualificationID": 3
+                    "employeeId": 1,
+                    "qualificationID": 1
                   },
                   {
-                    "employeeId": 15,
+                    "employeeId": 2,
                     "qualificationID": 2
                   }
                 ]

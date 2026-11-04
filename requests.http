@@ -1,10 +1,11 @@
 ### Projekt ohne Mitarbeiter erstellen
 POST http://localhost:8080/projects
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "description": "Website-Relaunch",
-  "responsibleEmployeeId": 12,
+  "responsibleEmployeeId": 2,
   "customerId": 5,
   "customerServiceRepresentative": "Anna Müller",
   "comment": "Neuer Webauftritt",
@@ -17,10 +18,11 @@ Content-Type: application/json
 ### Projekt mit einem Mitarbeiter, erstellen
 POST http://localhost:8080/projects
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "description": "Website-Relaunch",
-  "responsibleEmployeeId": 12,
+  "responsibleEmployeeId": 1,
   "customerId": 5,
   "customerServiceRepresentative": "Anna Müller",
   "comment": "Neuer Webauftritt",
@@ -28,8 +30,8 @@ Content-Type: application/json
   "endDate": "2027-02-28",
   "projectEmployees": [
     {
-      "employeeId": 4343,
-      "qualificationID": 3434
+      "employeeId": 2,
+      "qualificationID": 1
     }
   ]
 }
@@ -38,10 +40,11 @@ Content-Type: application/json
 ### Projekt mit mehreren Mitarbeitern erstellen
 POST http://localhost:8080/projects
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "description": "Website-Relaunch",
-  "responsibleEmployeeId": 12,
+  "responsibleEmployeeId": 1,
   "customerId": 5,
   "customerServiceRepresentative": "Anna Müller",
   "comment": "Neuer Webauftritt",
@@ -49,16 +52,12 @@ Content-Type: application/json
   "endDate": "2027-02-28",
   "projectEmployees": [
     {
-      "employeeId": 4343,
-      "qualificationID": 3434
+      "employeeId": 1,
+      "qualificationID": 1
     },
     {
-      "employeeId": 4344,
-      "qualificationID": 3435
-    },
-    {
-      "employeeId": 4345,
-      "qualificationID": 3436
+      "employeeId": 2,
+      "qualificationID": 2
     }
   ]
 }
@@ -67,3 +66,15 @@ Content-Type: application/json
 ### Alle Projekte abrufen
 GET http://localhost:8080/projects
 Accept: application/json
+Authorization: Bearer {{token}}
+
+
+### Alle Mitarbeiter im Employee-Service
+GET http://localhost:8089/employees
+Authorization: Bearer {{token}}
+
+
+### Alle Projekte eines Mitarbeiters abrufen
+@employeeId = 1
+GET http://localhost:8080/employees/{{employeeId}}/projects
+Authorization: Bearer {{token}}

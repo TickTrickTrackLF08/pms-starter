@@ -3,8 +3,11 @@ package de.szut.pms.common;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
+import de.szut.pms.project.ProjectNotFoundException;
 import de.szut.pms.employee.EmployeeServiceNotAvailableException;
+import de.szut.pms.project.ProjectTimeOverlapException;
+import de.szut.pms.project.EmployeeTimeConflictException;
+import de.szut.pms.projectemployee.EmployeeAlreadyAssignedException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -56,6 +59,14 @@ public class ApiExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(ProjectNotFoundException.class)
+    public ProblemDetail handleProjectNotFound(ProjectNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setTitle("Projekt nicht gefunden");
+        return problem;
+    }
+
+
     @ExceptionHandler(QualificationMissingException.class)
     public ProblemDetail handleQualificationMissing(QualificationMissingException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
@@ -71,4 +82,31 @@ public class ApiExceptionHandler {
         problem.setTitle("Employee Service nicht erreichbar");
         return problem;
     }
+
+    @ExceptionHandler(EmployeeTimeConflictException.class)
+    public ProblemDetail handleProjectsEmployeeOverlap(EmployeeTimeConflictException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Mitarbeiter gleichzeitig in 2 Projekten");
+        return problem;
+    }
+
+    @ExceptionHandler(EmployeeAlreadyAssignedException.class)
+    public ProblemDetail handleEmployeeAlreadyAssigned(EmployeeAlreadyAssignedException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, ex.getMessage());
+
+        problem.setTitle("Mitarbeiter bereits im Projekt zugeordnet");
+
+        return problem;
+    }
+
+    @ExceptionHandler(ProjectTimeOverlapException.class)
+    public ProblemDetail handleProjectTimeOverlap(ProjectTimeOverlapException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Zeitliche Projektüberschneidung");
+        return problem;
+    }
 }
+

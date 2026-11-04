@@ -5,7 +5,6 @@ import de.szut.pms.projectemployee.ProjectEmployeeDTO;
 import de.szut.pms.projectemployee.ProjectEmployeeMapper;
 import org.springframework.stereotype.Component;
 import de.szut.pms.projectemployee.CreateProjectEmployeeDTO;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +38,38 @@ public class ProjectMapper {
         return dto;
     }
 
+    public ProjectEmployeesDTO toProjectEmployeesDTO(Project entity) {
+        ProjectEmployeesDTO dto = new ProjectEmployeesDTO();
+        dto.setProjectId(entity.getId());
+        dto.setDescription(entity.getDescription());
+        List<ProjectEmployeeDTO> dtos = new ArrayList<>();
+        for (ProjectEmployee employee : entity.getEmployee()) {
+            dtos.add(projectEmployeeMapper.toDTO(employee));
+        }
+
+        dto.setEmployees(dtos);
+        return dto;
+    }
+
+    public Project toEntity(ProjectDTO dto) {return new Project();}
+
+
+
+    public ProjectOverviewDTO toOverviewDTO(Project entity) {
+        ProjectOverviewDTO dto = new ProjectOverviewDTO();
+
+        dto.setId(entity.getId());
+        dto.setDescription(entity.getDescription());
+        dto.setComment(entity.getComment());
+        dto.setCustomerId(entity.getCustomerId());
+        dto.setCustomerServiceRepresentative(entity.getCustomerServiceRepresentative());
+        dto.setStartDate(entity.getStartDate());
+        dto.setEndDate(entity.getEndDate());
+        dto.setResponsibleEmployeeId(entity.getResponsibleEmployeeId());
+
+        return dto;
+    }
+
 
     public Project toEntity(CreateProjectDTO dto) {
         Project entity = new Project();
@@ -67,6 +98,36 @@ public class ProjectMapper {
         }
 
         return entity;
+    }
+
+
+    public ProjectEmployeeRemoveDTO toRemoveEmployeeDTO(Project entity){
+        ProjectEmployeeRemoveDTO dto = new ProjectEmployeeRemoveDTO();
+        dto.setId(entity.getId());
+        dto.setDescription(entity.getDescription());
+
+        List<ProjectEmployeeDTO> dtos = new ArrayList<>();
+        for (ProjectEmployee employee : entity.getEmployee()) {
+            dtos.add(projectEmployeeMapper.toDTO(employee));
+        }
+        dto.setProjectEmployees(dtos);
+        return dto;
+    }
+
+
+    public void updateEntity(Project entity, UpdateProjectDTO dto) {
+
+        entity.setDescription(dto.description());
+        entity.setResponsibleEmployeeId(dto.responsibleEmployeeId());
+        entity.setCustomerId(dto.customerId());
+
+        entity.setCustomerServiceRepresentative(
+                dto.customerServiceRepresentative()
+        );
+
+        entity.setComment(dto.comment());
+        entity.setStartDate(dto.startDate());
+        entity.setEndDate(dto.endDate());
     }
 
 }

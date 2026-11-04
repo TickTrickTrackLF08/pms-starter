@@ -61,6 +61,7 @@ public class AuthentikSecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/swagger-config/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/projects/**").authenticated()
                         .anyRequest().authenticated() //Prevents forgotten endpoints from being accessible
                 );
 
