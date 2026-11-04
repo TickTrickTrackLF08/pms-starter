@@ -1,7 +1,7 @@
 
 package de.szut.pms.project;
 
-import de.szut.pms.common.ResourceNotFoundException;
+
 import de.szut.pms.customer.CustomerNotFoundException;
 import de.szut.pms.employee.EmployeeClient;
 import de.szut.pms.employee.EmployeeDto;

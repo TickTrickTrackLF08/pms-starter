@@ -17,22 +17,22 @@ public class EmployeeQualificationService {
 
 
     /**
-     * Zu der Task: 'Sicherstellen, dass bei einem Fehler das Projekt nicht entsteht'
-     * Wird beim Aufruf der Methode sichergestellt, da diese eine Exception wirft und abbricht,
-     * wenn die Qualifikation nicht vorhanden ist
+     * Regarding the task: “Ensure that the project is not created if an error occurs”
+     * This is ensured when the method is called, as it throws an exception and terminates
+     * if the qualification is not present
      *
-     *
-     * Für das Zuweisen eines einzelnen Mitarbeiters zu einem Projekt.
-     * @param projectEmployee der Mitarbieter, der einem neuem Projekt zugeordnet werden soll.
+     * For assigning a single employee to a project.
+     * @param projectEmployee the employee to be assigned to a new project.
      */
     public void validateQualification(ProjectEmployee projectEmployee){
         validateQualification(projectEmployee.getEmployeeId(), projectEmployee.getQualificationID());
     }
+
     /**
-     * Für das Zuweisen eines einzelnen Mitarbeiter (anhand der Id und Qualifikation und nicht der Employee-Entität)
+     * For assigning a single employee (based on the ID and qualification, not the Employee entity)
      *
-     * @param employeeId    des abzugleichenden Mitarbeiters
-     * @param qualificationID gewünschte QualifikationID für das Projekt
+     * @param employeeId    the employee to be matched
+     * @param qualificationID the desired qualification ID for the project
      */
     public void validateQualification(Long employeeId, Long qualificationID) {
         EmployeeDto employee = employeeClient.findById(employeeId);
@@ -46,8 +46,8 @@ public class EmployeeQualificationService {
     }
 
     /**
-     * Für das Anlegen eines Projektes.
-     * @param employees die Mitarbeiterliste, des anzulegenden Projektes
+     * For creating a project.
+     * @param employees the list of employees for the project to be created
      */
     public void validateEmployees(List<ProjectEmployee> employees) {
         for (ProjectEmployee employee : employees) {
@@ -56,21 +56,21 @@ public class EmployeeQualificationService {
     }
 
     /**
-     * Prüft, ob ein Mitarbeiter existiert, ohne eine Qualifikation zu prüfen.
+     * Checks whether an employee exists without verifying any qualifications.
      */
     public void validateEmployee(Long employeeId) {
         EmployeeDto employee = employeeClient.findById(employeeId);
 
         if (employee == null) {
             throw new ResourceNotFoundException(
-                    "Mitarbeiter mit ID " + employeeId + " nicht gefunden"
+                    "Employee with ID " + employeeId + " not found"
             );
         }
     }
 
     /**
-     * Für das Anlegen eines Projektes
-     * @param project welches angelegt werden soll
+     * For creating a project
+     * @param project the project to be created
      */
     public void validateEmployees(Project project) {
         validateEmployees(project.getEmployee());

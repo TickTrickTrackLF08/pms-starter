@@ -32,15 +32,16 @@ public class ProjectService {
         this.availabilityService = availabilityService;
     }
 
+
     @Transactional
     public ProjectDTO create(CreateProjectDTO dto) {
 
-        // Prüfen, ob der Kunde existiert
+        // Check if the customer exists
         if (!customerClient.existsById(dto.customerId())) {
             throw new CustomerNotFoundException(dto.customerId());
         }
 
-        // Prüfen, ob der Mitarbeiter existiert und die angegebene qualifikation besitzt. Falls Mitarbeiter gesetzt wurden
+        // Check whether the employee exists and has the specified qualification. If employees have been added
         if (dto.projectEmployees() != null) {
             for (CreateProjectEmployeeDTO projectEmployee : dto.projectEmployees()) {
                 qualificationService.validateQualification(
@@ -50,15 +51,18 @@ public class ProjectService {
             }
         }
 
-        // Prüfen, ob der Projektleiter existiert
+        // Check whether the project manager exists
         qualificationService.validateEmployee(dto.responsibleEmployeeId());
 
-        // Projekt erstellen und speichern
+        // Create and save a project
         Project saved = repository.save(mapper.toEntity(dto));
 
         return mapper.toDTO(saved);
     }
 
+
+    //Transaction is necessary because the mapper reads the LAZY-loaded employee list; without an open session, a LazyInitializationException would occur.
+    //findById + orElseThrow throws a ProjectNotFoundException (404) if the ID is unknown
     @Transactional
     public ProjectDTO findOneByID(Long id) {
         Project project =  repository.findById(id).orElseThrow(() -> new ProjectNotFoundException(id));
@@ -126,7 +130,8 @@ public class ProjectService {
         return mapper.toRemoveEmployeeDTO(project);
     }
 
-
+    //Transaction is necessary because the mapper reads the LAZY-loaded employee list; without an open session, a LazyInitializationException would occur.
+    //findById + orElseThrow throws a ProjectNotFoundException (404) if the ID is unknown
     @Transactional
     public ProjectEmployeesDTO findAllEmployeesOfProjectOneByID(Long id) {
         Project project =  repository.findById(id).orElseThrow(() -> new ProjectNotFoundException(id));

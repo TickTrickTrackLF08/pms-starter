@@ -19,9 +19,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 /**
- * Verdrahtung fertig, Endpunkte nicht: Trage hier deine eigenen Pfade in
- * authorizeHttpRequests() ein, sobald du sie implementiert hast. Alles
- * andere — JWT-Prüfung gegen Authentik, CORS — steht bereits.
+ * Security configuration: Validates JWTs against authentik and allows CORS.
+ * Only the Swagger endpoints are accessible without a token
+ * (/swagger, /swagger/**, /swagger-ui/**, /swagger-config/**, /v3/api-docs/**).
+ * All other endpoints, including /projects/**, require a valid token.
  */
 @Configuration
 @EnableWebSecurity

@@ -5,7 +5,7 @@ public class QualificationMissingException extends RuntimeException {
         super(message);
     }
     public  QualificationMissingException(Long id, Long qualification) {
-        super("Der Mitarbeiter " + id + " besitzt die Qualifikation mit der ID " + qualification +" nicht!");
+        super("The Employee " + id + " holds the qualification with the ID " + qualification +" not!");
     }
 }
 
