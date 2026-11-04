@@ -19,6 +19,7 @@ public class ProjectMapper {
 
     public ProjectDTO toDTO(Project entity) {
         ProjectDTO dto = new ProjectDTO();
+
         dto.setId(entity.getId());
         dto.setDescription(entity.getDescription());
         dto.setComment(entity.getComment());
@@ -29,7 +30,7 @@ public class ProjectMapper {
         dto.setResponsibleEmployeeId(entity.getResponsibleEmployeeId());
 
         List<ProjectEmployeeDTO> dtos = new ArrayList<>();
-        for (ProjectEmployee employee : entity.getEmployee()) {
+        for (ProjectEmployee employee : entity.getEmployees()) {
             dtos.add(projectEmployeeMapper.toDTO(employee));
         }
 
@@ -40,16 +41,34 @@ public class ProjectMapper {
 
     public ProjectEmployeesDTO toProjectEmployeesDTO(Project entity) {
         ProjectEmployeesDTO dto = new ProjectEmployeesDTO();
+
         dto.setProjectId(entity.getId());
         dto.setDescription(entity.getDescription());
         List<ProjectEmployeeDTO> dtos = new ArrayList<>();
-        for (ProjectEmployee employee : entity.getEmployee()) {
+        for (ProjectEmployee employee : entity.getEmployees()) {
             dtos.add(projectEmployeeMapper.toDTO(employee));
         }
 
         dto.setEmployees(dtos);
         return dto;
     }
+
+
+    public ProjectOverviewDTO toOverviewDTO(Project entity) {
+        ProjectOverviewDTO dto = new ProjectOverviewDTO();
+
+        dto.setId(entity.getId());
+        dto.setDescription(entity.getDescription());
+        dto.setComment(entity.getComment());
+        dto.setCustomerId(entity.getCustomerId());
+        dto.setCustomerServiceRepresentative(entity.getCustomerServiceRepresentative());
+        dto.setStartDate(entity.getStartDate());
+        dto.setEndDate(entity.getEndDate());
+        dto.setResponsibleEmployeeId(entity.getResponsibleEmployeeId());
+
+        return dto;
+    }
+
 
     public Project toEntity(CreateProjectDTO dto) {
         Project entity = new Project();
@@ -80,17 +99,23 @@ public class ProjectMapper {
         return entity;
     }
 
+    /**
+     * Maps a project entity to a ProjectEmployeeRemoveDTO.
+     * @param entity the updated project to map
+     * @return a DTO containing the project data and assigned employees,
+     * according to the response criteria (just the id, description and updated employee-list)
+     */
+    public ProjectEmployeesDTO toRemoveEmployeeDTO(Project entity){
+        ProjectEmployeesDTO dto = new ProjectEmployeesDTO();
 
-    public ProjectEmployeeRemoveDTO toRemoveEmployeeDTO(Project entity){
-        ProjectEmployeeRemoveDTO dto = new ProjectEmployeeRemoveDTO();
-        dto.setId(entity.getId());
+        dto.setProjectId(entity.getId());
         dto.setDescription(entity.getDescription());
 
         List<ProjectEmployeeDTO> dtos = new ArrayList<>();
-        for (ProjectEmployee employee : entity.getEmployee()) {
+        for (ProjectEmployee employee : entity.getEmployees()) {
             dtos.add(projectEmployeeMapper.toDTO(employee));
         }
-        dto.setProjectEmployees(dtos);
+        dto.setEmployees(dtos);
         return dto;
     }
 

@@ -1,11 +1,7 @@
 package de.szut.pms.employee;
 
 import de.szut.pms.common.ResourceNotFoundException;
-import de.szut.pms.project.Project;
-import de.szut.pms.projectemployee.ProjectEmployee;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class EmployeeQualificationService {

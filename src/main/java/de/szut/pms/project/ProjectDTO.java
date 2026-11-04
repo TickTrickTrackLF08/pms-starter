@@ -8,27 +8,28 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.List;
 
-@Setter
 @Getter
+@Setter
 @JsonPropertyOrder({
         "id",
         "description",
-        "comment",
+        "responsibleEmployeeId",
         "customerId",
         "customerServiceRepresentative",
+        "comment",
         "startDate",
         "endDate",
-        "responsibleEmployeeId",
         "projectEmployees"
 })
 public class ProjectDTO {
-     private Long id;
-     private String description;
-     private Long responsibleEmployeeId;
-     private Long customerId;
-     private String customerServiceRepresentative;
-     private String comment;
-     private LocalDate startDate;
-     private LocalDate endDate;
-     private List<ProjectEmployeeDTO> projectEmployees;
+
+    private Long id;
+    private String description;
+    private Long responsibleEmployeeId;
+    private Long customerId;
+    private String customerServiceRepresentative;
+    private String comment;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private List<ProjectEmployeeDTO> projectEmployees;
 }

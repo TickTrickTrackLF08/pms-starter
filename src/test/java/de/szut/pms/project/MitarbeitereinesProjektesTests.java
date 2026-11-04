@@ -34,7 +34,7 @@ public class MitarbeitereinesProjektesTests extends AbstractIntegrationTest {
             pe.setProject(project);          // Owning Side setzen, sonst bleibt project_id null
             pe.setEmployeeId(employeeId);
             pe.setQualificationID(1L);
-            project.getEmployee().add(pe);
+            project.getEmployees().add(pe);
         }
         return projectRepository.save(project);
     }
