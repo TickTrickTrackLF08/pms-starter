@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+// An employee may appear only once in the same project: (project_id, employee_id) is unique.
+// The same employee may appear in different projects. The database cannot check for time overlaps between projects; the service handles that (story “Prevent Time Overlaps”).
+
 @Entity
 @Table(name = "project_employee", uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "employee_id"}))
 @Getter

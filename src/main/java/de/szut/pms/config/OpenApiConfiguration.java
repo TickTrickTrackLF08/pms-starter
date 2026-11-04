@@ -35,16 +35,16 @@ public class OpenApiConfiguration {
                         .description("""
                                 ## Authentifizierung
 
-                                Dieser Service prüft JWTs gegen den lokal per `docker compose` laufenden \
-                                Authentik-Server. Einen Bearer-Token bekommst du wie folgt:
+                                This service verifies JWTs against the Authentication Server running locally via `docker compose`.
+                                You can obtain a bearer token as follows:
 
-                                1. `docker compose up` laufen lassen.
-                                2. Die Anfrage in `GetBearerToken.http` ausführen (App-Passwort für `john` \
-                                ist dort schon fest hinterlegt, per Blueprint vorprovisioniert).
-                                3. `access_token` aus der Antwort kopieren.
+                                1. Run `docker compose up`.
+                                2. Execute the request in `GetBearerToken.http` (the app password for `john`
+                                is already hard-coded there, pre-provisioned via the blueprint).
+                                3. Copy the `access_token` from the response.
 
-                                Details und ein lauffähiges Beispiel stehen in `GetBearerToken.http` im \
-                                Projektwurzelverzeichnis.
+                                Details and a working example can be found in `GetBearerToken.http` in the
+                                project root directory.
                                 """)
                         .version("0.1"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))

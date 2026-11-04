@@ -1,4 +1,4 @@
-package de.szut.pms.IntegrationTests;
+package de.szut.pms.security;
 
 import de.szut.pms.testcontainers.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
