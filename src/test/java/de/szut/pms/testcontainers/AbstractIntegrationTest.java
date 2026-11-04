@@ -1,5 +1,6 @@
 package de.szut.pms.testcontainers;
 
+import de.szut.pms.customer.CustomerClient;
 import de.szut.pms.employee.EmployeeClient;
 import de.szut.pms.project.ProjectRepository;
 import de.szut.pms.project.ProjectService;
@@ -33,6 +34,8 @@ public class AbstractIntegrationTest {
     @MockitoBean
     protected EmployeeClient employeeClient;
 
+    @MockitoBean
+    protected CustomerClient customerClient;
 
     @Autowired
     protected ProjectService projectService;
