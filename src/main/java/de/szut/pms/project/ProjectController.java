@@ -289,21 +289,9 @@ public class ProjectController {
     )
     @ApiResponse(
             responseCode = "404",
-            description = "The project does not exist or the employee is not assigned to it",
-            content = @Content(
-                    mediaType = "application/problem+json",
-                    schema = @Schema(implementation = ProblemDetail.class),
-                    examples = @ExampleObject(value = """
-                        {
-                          "detail": "There is no employee with the ID 2 in the project with the ID 1.",
-                          "instance": "/projects/1/employees/2",
-                          "status": 404,
-                          "title": "Not Found"
-                        }
-                        """)
-            )
+            description = "The project does not exist or the employee is not assigned to it"
     )
-    @ApiResponse(responseCode = "401", description = "Invalider JWT")
+    @ApiResponse(responseCode = "401", description = "Invalid JWT")
     @DeleteMapping("/{projectId}/employees/{employeeId}")
     public ResponseEntity<ProjectEmployeeRemoveDTO> removeEmployee(@PathVariable Long projectId, @PathVariable Long employeeId) {
         ProjectEmployeeRemoveDTO projectEmployeeRemoveDTO = service.removeEmployee(projectId, employeeId);

@@ -77,7 +77,7 @@ class ProjectControllerIntegrationTest extends AbstractIntegrationTest {
             }
             """;
 
-    //entspricht Erfolgsfall für Mitarbeiterqualifikation
+    //Corresponds to integration test - successful case for employee-qualifiction-verification
     @Test
     void createProjectSuccessfully() throws Exception {
         long countBefore = projectRepository.count();
@@ -99,7 +99,7 @@ class ProjectControllerIntegrationTest extends AbstractIntegrationTest {
         assertEquals(countBefore + 1, projectRepository.count());
     }
 
-    //ennspricht Test für die Mitarbeiterqualifikation, Qualifikations nicht vorhanden
+    //Corresponds to integration test - non-existing qualification for employee-qualifiction-verification
     @Test
     void createProjectWithMissingEmployeeQualification() throws Exception {
         long countBefore = projectRepository.count();
@@ -121,7 +121,7 @@ class ProjectControllerIntegrationTest extends AbstractIntegrationTest {
         assertEquals(countBefore, projectRepository.count());
     }
 
-    //entspricht Test für die Mitarbeiterqualifikation, EmployeeService nicht erreichbar
+    //Corresponds to integration test - service not available for employee-qualifiction-verification
     @Test
     void createProjectWhenEmployeeServiceIsUnavailableForProjectEmployee()
             throws Exception {

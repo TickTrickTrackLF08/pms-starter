@@ -20,7 +20,11 @@ public class EmployeeRESTClient implements EmployeeClient {
     public EmployeeRESTClient(TokenForwarding tokenForwarding) {
         this.tokenForwarding = tokenForwarding;
     }
-
+    /**
+     * Sends request to Empolyee-Service
+     * @param id of employee which is to be found in Employee-Service
+     * @return a EmployeeDTO
+     */
     @Override
     public EmployeeDto findById(Long id) {
         try {
