@@ -2,7 +2,6 @@ package de.szut.pms.common;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import de.szut.pms.customer.CustomerNotFoundException;
 import de.szut.pms.employee.EmployeeServiceNotAvailableException;
 import de.szut.pms.employee.QualificationMissingException;
 import de.szut.pms.project.EmployeeTimeConflictException;
@@ -12,13 +11,9 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Zentrale Übersetzung von Ausnahmen in HTTP-Antworten nach RFC 9457
@@ -104,18 +99,7 @@ public class ApiExceptionHandler {
         return problem;
     }
 
-    @ExceptionHandler(CustomerNotFoundException.class)
-    public ResponseEntity<ProblemDetail> handleCustomerNotFound(
-            CustomerNotFoundException exception) {
-
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-                HttpStatus.NOT_FOUND,
-                exception.getMessage()
-        );
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
-    }
-
+    @ExceptionHandler(ResponsibleEmployeeAlreadyAssignedException.class)
     public ProblemDetail handleResponsibleEmployeeAlreadyAssigned(ResponsibleEmployeeAlreadyAssignedException  ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.BAD_REQUEST, ex.getMessage());

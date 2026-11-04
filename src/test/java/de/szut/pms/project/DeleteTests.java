@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
-public class DeleteTest extends AbstractIntegrationTest {
+public class DeleteTests extends AbstractIntegrationTest {
 
 
     @Test

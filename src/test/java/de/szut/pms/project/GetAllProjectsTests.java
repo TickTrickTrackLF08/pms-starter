@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class GetAllProjectsTest extends AbstractIntegrationTest {
+public class GetAllProjectsTests extends AbstractIntegrationTest {
 
     @Autowired
     private ProjectRepository projectRepository;

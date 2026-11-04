@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class ChangeProjectDetails extends AbstractIntegrationTest {
+class ChangeProjectDetailsTests extends AbstractIntegrationTest {
 
     @Test
     @WithMockUser
@@ -152,5 +152,41 @@ class ChangeProjectDetails extends AbstractIntegrationTest {
         return put("/projects/" + projectId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
+    }
+
+    @Test
+    @WithMockUser
+    void updateProjectWithEndDateBeforeStartDate() throws Exception {
+        Project project = createProject();
+
+        mockMvc.perform(updateRequest(project.getId(), projectJson(
+                        "Valid project description", "2026-02-10", "2026-02-01")))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    void updateProjectWithNonExistingCustomer() throws Exception {
+        Project project = createProject();
+        mockDependencies();
+        when(customerClient.existsById(1L)).thenReturn(false);
+
+        mockMvc.perform(updateRequest(project.getId(), projectJson(
+                        "Valid project description", "2026-02-01", "2026-02-10")))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    void updateProjectWithProjectEmployeeAsResponsibleEmployee() throws Exception {
+        Project project = createProject();
+        addEmployee(project);              // employee 1 is a project employee
+        projectRepository.save(project);
+
+        String json = projectJson("Valid project description", "2026-01-01", "2026-01-10")
+                .replace("\"responsibleEmployeeId\": 2", "\"responsibleEmployeeId\": 1");
+
+        mockMvc.perform(updateRequest(project.getId(), json))
+                .andExpect(status().isBadRequest());
     }
 }
