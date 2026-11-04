@@ -1,7 +1,5 @@
-package de.szut.pms.IntegrationsTests;
+package de.szut.pms.project;
 
-import de.szut.pms.project.Project;
-import de.szut.pms.project.ProjectRepository;
 import de.szut.pms.projectemployee.ProjectEmployee;
 import de.szut.pms.testcontainers.AbstractIntegrationTest;
 import org.junit.jupiter.api.AfterEach;
@@ -28,7 +26,7 @@ public class MitarbeitereinesProjektesTests extends AbstractIntegrationTest {
         project.setResponsibleEmployeeId(1L);
         project.setCustomerId(1L);
         project.setCustomerServiceRepresentative("Maxi Heinz");
-        project.setComment("Testprojekt");
+        project.setComment("Test project");
         project.setStartDate(LocalDate.of(2026, 1, 1));
         project.setEndDate(LocalDate.of(2026, 12, 31));
         for (Long employeeId : employeeIds) {
@@ -44,7 +42,7 @@ public class MitarbeitereinesProjektesTests extends AbstractIntegrationTest {
     @Test
     @WithMockUser
     void getEmployeesOfProjectByIdWithIdReturnsOk() throws Exception {
-        Project saved = saveProject("Neues Projekt", 1L, 2L);
+        Project saved = saveProject("new project", 1L, 2L);
         mockMvc.perform(get("/projects/" + saved.getId() + "/employees"))
                 .andExpect(status().is(200));
     }
@@ -52,7 +50,7 @@ public class MitarbeitereinesProjektesTests extends AbstractIntegrationTest {
     @Test
     @WithMockUser
     void getEmployeesOfProjectWithoutEmployeesReturnsEmptyList() throws Exception {
-        Project saved = saveProject("Leeres Projekt");
+        Project saved = saveProject("Empty project");
 
         mockMvc.perform(get("/projects/" + saved.getId() + "/employees"))
                 .andExpect(status().isOk())

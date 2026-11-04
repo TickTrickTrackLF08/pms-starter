@@ -9,6 +9,7 @@ import de.szut.pms.employee.EmployeeQualificationService;
 import de.szut.pms.projectemployee.CreateProjectEmployeeDTO;
 import de.szut.pms.projectemployee.EmployeeAlreadyAssignedException;
 import de.szut.pms.projectemployee.ProjectEmployee;
+import de.szut.pms.projectemployee.ProjectEmployeeService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import de.szut.pms.projectemployee.ProjectEmployeeNotFoundException;
@@ -24,6 +25,8 @@ public class ProjectService {
     private final EmployeeQualificationService qualificationService;
     private final ProjectEmployeeAvailabilityService availabilityService;
 
+
+
     public ProjectService(ProjectRepository repository, ProjectMapper mapper, CustomerClient customerClient, EmployeeQualificationService qualificationService, ProjectEmployeeAvailabilityService availabilityService) {
         this.repository = repository;
         this.mapper = mapper;
@@ -32,15 +35,16 @@ public class ProjectService {
         this.availabilityService = availabilityService;
     }
 
+
     @Transactional
     public ProjectDTO create(CreateProjectDTO dto) {
 
-        // Prüfen, ob der Kunde existiert
+        // Check if the customer exists
         if (!customerClient.existsById(dto.customerId())) {
             throw new CustomerNotFoundException(dto.customerId());
         }
 
-        // Prüfen, ob der Mitarbeiter existiert und die angegebene qualifikation besitzt. Falls Mitarbeiter gesetzt wurden
+        // Check whether the employee exists and has the specified qualification. If employees have been added
         if (dto.projectEmployees() != null) {
             for (CreateProjectEmployeeDTO projectEmployee : dto.projectEmployees()) {
                 qualificationService.validateQualification(
@@ -50,15 +54,24 @@ public class ProjectService {
             }
         }
 
-        // Prüfen, ob der Projektleiter existiert
+        // Check whether the project manager exists
         qualificationService.validateEmployee(dto.responsibleEmployeeId());
 
-        // Projekt erstellen und speichern
-        Project saved = repository.save(mapper.toEntity(dto));
+        //Create project
+        Project project = mapper.toEntity(dto);
+
+        //Check if employees are available at that time
+        availabilityService.validateNoTimeOverlap(project);
+
+        // Save project
+         Project saved = repository.save(project);
 
         return mapper.toDTO(saved);
     }
 
+
+    //Transaction is necessary because the mapper reads the LAZY-loaded employee list; without an open session, a LazyInitializationException would occur.
+    //findById + orElseThrow throws a ProjectNotFoundException (404) if the ID is unknown
     @Transactional
     public ProjectDTO findOneByID(Long id) {
         Project project =  repository.findById(id).orElseThrow(() -> new ProjectNotFoundException(id));
@@ -126,7 +139,8 @@ public class ProjectService {
         return mapper.toRemoveEmployeeDTO(project);
     }
 
-
+    //Transaction is necessary because the mapper reads the LAZY-loaded employee list; without an open session, a LazyInitializationException would occur.
+    //findById + orElseThrow throws a ProjectNotFoundException (404) if the ID is unknown
     @Transactional
     public ProjectEmployeesDTO findAllEmployeesOfProjectOneByID(Long id) {
         Project project =  repository.findById(id).orElseThrow(() -> new ProjectNotFoundException(id));

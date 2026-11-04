@@ -8,9 +8,9 @@ import java.util.List;
 
 @Setter
 @Getter
-public class ProjectEmployeesDTO {
-    Long projectId;
-    String description;
-    List<ProjectEmployeeDTO> employees;
+public class ProjectEmployeesDTO {  //A separate DTO because it precisely defines what the client sees and needs, and ensures there are no empty fields in the JSON
+    private Long projectId;
+    private String description;
+    private List<ProjectEmployeeDTO> employees;
 
 }

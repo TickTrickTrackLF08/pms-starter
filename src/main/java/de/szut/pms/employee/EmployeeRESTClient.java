@@ -30,10 +30,10 @@ public class EmployeeRESTClient implements EmployeeClient {
                     .retrieve()
                     .body(EmployeeDto.class);
         } catch (HttpClientErrorException.NotFound e) {
-            throw new ResourceNotFoundException("Mitarbeiter mit ID " + id + " nicht gefunden");
+            throw new ResourceNotFoundException("Employee with ID " + id + " not found");
         } catch (ResourceAccessException e) {
             throw new EmployeeServiceNotAvailableException(
-                    "Der Employee-Service ist nicht erreichbar ('" + employeeURL + "/employees/" + id + "').");
+                    "The Employee Service is unavailable ('" + employeeURL + "/employees/" + id + "').");
         }
     }
 }

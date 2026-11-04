@@ -9,39 +9,39 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 
-@Schema(description = "Daten zum Anlegen eines neuen Projekts")
+@Schema(description = "Data for Creating a New Project")
 public record CreateProjectDTO(
 
-        @Schema(description = "Beschreibung des Projekts", example = "Website-Relaunch für den Kunden")
-        @NotNull(message = "Die Projektbeschreibung darf nicht fehlen.")
-        @Size(min = 10, message = "Die Beschreibung muss mindestens 10 Zeichen lang sein.")
+        @Schema(description = "Project Description", example = "Website Relaunch for the Client")
+        @NotNull(message = "The project description is a must")
+        @Size(min = 10, message = "The description must be at least 10 characters long")
         String description,
 
-        @Schema(description = "ID des verantwortlichen internen Mitarbeiters", example = "1")
-        @NotNull(message = "Ein verantwortlicher interner Mitarbeiter muss angegeben werden.")
+        @Schema(description = "ID of the responsible internal employee", example = "1")
+        @NotNull(message = "A responsible internal employee must be designated")
         Long responsibleEmployeeId,
 
-        @Schema(description = "ID des Kunden", example = "5")
-        @NotNull(message = "Ein Kunde muss angegeben werden.")
+        @Schema(description = "Customer ID", example = "5")
+        @NotNull(message = "A customer must be specified")
         Long customerId,
 
-        @Schema(description = "Ansprechpartner beim Kunden", example = "Anna Müller")
-        @NotNull(message = "Ein Ansprechpartner beim Kunden muss angegeben werden.")
-        @Size(min = 1, message = "Ein Ansprechpartner beim Kunden muss angegeben werden.")
+        @Schema(description = "Customer Contact Person", example = "Anna Müller")
+        @NotNull(message = "A contact person at the customer's company must be specified")
+        @Size(min = 1, message = "A contact person at the customer's company must be specified")
         String customerServiceRepresentative,
 
-        @Schema(description = "Zusätzliche Kommentare zum Projekt", example = "Neuer Webauftritt für 2027")
+        @Schema(description = "Additional comments on the project", example = "new Website for 2027")
         String comment,
 
-        @Schema(description = "Startdatum des Projekts", example = "2026-11-01")
-        @NotNull(message = "Das Startdatum muss angegeben werden.")
+        @Schema(description = "Project Start Date", example = "2026-11-01")
+        @NotNull(message = "The start date must be specified")
         LocalDate startDate,
 
-        @Schema(description = "Enddatum des Projekts", example = "2027-02-28")
-        @NotNull(message = "Das Enddatum muss angegeben werden.")
+        @Schema(description = "Project End Date", example = "2027-02-28")
+        @NotNull(message = "The end date must be specified")
         LocalDate endDate,
 
-        @Schema(description = "Mitarbeiter, die dem Projekt zugeordnet werden", example = """
+        @Schema(description = "Employees assigned to the project", example = """
                 [
                   {
                     "employeeId": 1,
@@ -61,7 +61,7 @@ public record CreateProjectDTO(
                 if (startDate != null && endDate != null
                         && !startDate.isBefore(endDate)) {
                         throw new IllegalArgumentException(
-                                "Das Startdatum muss vor dem Enddatum liegen."
+                                "The start date must be before the end date."
                         );
                 }
         }
