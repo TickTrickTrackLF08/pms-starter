@@ -13,4 +13,5 @@ username = john &
 password = {{app_password}} &
 client_id = employee_api_client
 
+> {% client.global.set("token", response.body.access_token); %}
 ###

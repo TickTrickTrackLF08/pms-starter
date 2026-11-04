@@ -38,9 +38,9 @@ public class ProjectController {
                     schema = @Schema(implementation = ProjectDTO.class),
                     examples = @ExampleObject(value = """
                         {
-                          "id": 7,
+                          "id": 1,
                           "description": "Website-Relaunch",
-                          "responsibleEmployeeId": 12,
+                          "responsibleEmployeeId": 1,
                           "customerId": 5,
                           "customerServiceRepresentative": "Anna Müller",
                           "comment": "Neuer Webauftritt",
@@ -49,12 +49,12 @@ public class ProjectController {
                           "projectEmployees": [
                             {
                               "id": 1,
-                              "employeeId": 12,
-                              "qualificationID": 3
+                              "employeeId": 1,
+                              "qualificationID": 1
                             },
                             {
                               "id": 2,
-                              "employeeId": 15,
+                              "employeeId": 2,
                               "qualificationID": 2
                             }
                           ]
@@ -115,7 +115,7 @@ public class ProjectController {
     @ApiResponse(responseCode = "200", description = "Projekte erfolgreich abgerufen")
     @ApiResponse(responseCode = "500", description = "Interner Serverfehler")
     @GetMapping
-    public ResponseEntity<List<ProjectDTO>> findAll() {
+    public ResponseEntity<List<ProjectOverviewDTO>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 

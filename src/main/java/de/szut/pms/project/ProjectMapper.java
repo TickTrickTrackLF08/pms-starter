@@ -55,6 +55,22 @@ public class ProjectMapper {
 
 
 
+    public ProjectOverviewDTO toOverviewDTO(Project entity) {
+        ProjectOverviewDTO dto = new ProjectOverviewDTO();
+
+        dto.setId(entity.getId());
+        dto.setDescription(entity.getDescription());
+        dto.setComment(entity.getComment());
+        dto.setCustomerId(entity.getCustomerId());
+        dto.setCustomerServiceRepresentative(entity.getCustomerServiceRepresentative());
+        dto.setStartDate(entity.getStartDate());
+        dto.setEndDate(entity.getEndDate());
+        dto.setResponsibleEmployeeId(entity.getResponsibleEmployeeId());
+
+        return dto;
+    }
+
+
     public Project toEntity(CreateProjectDTO dto) {
         Project entity = new Project();
 

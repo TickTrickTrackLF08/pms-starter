@@ -1,7 +1,10 @@
 package de.szut.pms.project;
 
+import de.szut.pms.common.ResourceNotFoundException;
 import de.szut.pms.customer.CustomerClient;
 import de.szut.pms.customer.CustomerNotFoundException;
+import de.szut.pms.employee.EmployeeProjectDTO;
+import de.szut.pms.employee.EmployeeProjectsDTO;
 import de.szut.pms.employee.EmployeeQualificationService;
 import de.szut.pms.projectemployee.CreateProjectEmployeeDTO;
 import de.szut.pms.projectemployee.ProjectEmployee;
@@ -79,10 +82,35 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProjectDTO> findAll() {
+    public List<ProjectOverviewDTO> findAll() {
         return repository.findAll().stream()
-                .map(mapper::toDTO)
+                .map(mapper::toOverviewDTO)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public EmployeeProjectsDTO findByEmployeeId(Long employeeId) {
+        qualificationService.validateEmployee(employeeId);
+
+        List<EmployeeProjectDTO> projects = repository.findByEmployeeId(employeeId).stream()
+                .map(project -> {
+                    Long qualificationId = project.getEmployee().stream()
+                            .filter(pe -> pe.getEmployeeId().equals(employeeId))
+                            .map(ProjectEmployee::getQualificationID)
+                            .findFirst()
+                            .orElse(null);
+
+                    return new EmployeeProjectDTO(
+                            project.getId(),
+                            project.getDescription(),
+                            project.getStartDate(),
+                            project.getEndDate(),
+                            qualificationId
+                    );
+                })
+                .toList();
+
+        return new EmployeeProjectsDTO(employeeId, projects);
     }
 
 
