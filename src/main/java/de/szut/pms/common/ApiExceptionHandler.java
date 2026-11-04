@@ -15,7 +15,6 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import de.szut.pms.hello.HelloNotFoundException;
 import de.szut.pms.employee.QualificationMissingException;
 
 /**
@@ -29,14 +28,6 @@ import de.szut.pms.employee.QualificationMissingException;
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class ApiExceptionHandler {
-
-    @ExceptionHandler(HelloNotFoundException.class)
-    public ProblemDetail handleNotFound(HelloNotFoundException ex) {
-        ProblemDetail problem =
-                ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problem.setTitle("Not found");
-        return problem;
-    }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ProblemDetail handleNotFound(ResourceNotFoundException ex) {
