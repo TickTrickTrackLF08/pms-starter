@@ -114,4 +114,20 @@ public class ProjectMapper {
         return dto;
     }
 
+
+    public void updateEntity(Project entity, UpdateProjectDTO dto) {
+
+        entity.setDescription(dto.description());
+        entity.setResponsibleEmployeeId(dto.responsibleEmployeeId());
+        entity.setCustomerId(dto.customerId());
+
+        entity.setCustomerServiceRepresentative(
+                dto.customerServiceRepresentative()
+        );
+
+        entity.setComment(dto.comment());
+        entity.setStartDate(dto.startDate());
+        entity.setEndDate(dto.endDate());
+    }
+
 }

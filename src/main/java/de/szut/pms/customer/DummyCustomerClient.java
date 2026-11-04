@@ -3,11 +3,11 @@ package de.szut.pms.customer;
 import org.springframework.stereotype.Component;
 
 /**
- * Platzhalter, solange der echte Kunden-Service nicht erreichbar ist:
- * Jede nicht-null Kennung gilt als vorhanden. Tausche diese Klasse gegen
- * eine Implementierung aus, die den Kunden-Service über RestClient
- * abfragt, sobald er bereitsteht — die Schnittstelle {@link CustomerClient}
- * bleibt dabei gleich, du musst also an den Aufrufstellen nichts ändern.
+ * Placeholder until the actual customer service is available:
+ * Any non-zero identifier is considered to exist. Replace this class with
+ * an implementation that queries the customer service via RestClient
+ * as soon as it becomes available—the {@link CustomerClient} interface
+ * remains the same, so you don't need to change anything in the call sites.
  */
 @Component
 public class DummyCustomerClient implements CustomerClient {

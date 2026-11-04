@@ -5,7 +5,9 @@ import java.util.Map;
 
 import de.szut.pms.project.ProjectNotFoundException;
 import de.szut.pms.employee.EmployeeServiceNotAvailableException;
+import de.szut.pms.project.ProjectTimeOverlapException;
 import de.szut.pms.project.EmployeeTimeConflictException;
+import de.szut.pms.projectemployee.EmployeeAlreadyAssignedException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import de.szut.pms.hello.HelloNotFoundException;
-import org.springframework.web.client.ResourceAccessException;
 import de.szut.pms.employee.QualificationMissingException;
 
 /**
@@ -33,7 +34,7 @@ public class ApiExceptionHandler {
     public ProblemDetail handleNotFound(HelloNotFoundException ex) {
         ProblemDetail problem =
                 ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problem.setTitle("Nicht gefunden");
+        problem.setTitle("Not found");
         return problem;
     }
 
@@ -41,7 +42,7 @@ public class ApiExceptionHandler {
     public ProblemDetail handleNotFound(ResourceNotFoundException ex) {
         ProblemDetail problem =
                 ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problem.setTitle("Nicht gefunden");
+        problem.setTitle("Not found");
         return problem;
     }
 
@@ -52,8 +53,8 @@ public class ApiExceptionHandler {
                 error -> errors.put(error.getField(), error.getDefaultMessage()));
 
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-                HttpStatus.BAD_REQUEST, "Die Anfrage enthält ungültige Felder.");
-        problem.setTitle("Ungültige Eingabe");
+                HttpStatus.BAD_REQUEST, "The request contains invalid fields");
+        problem.setTitle("Invalid input");
         problem.setProperty("errors", errors);
         return problem;
     }
@@ -61,7 +62,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(ProjectNotFoundException.class)
     public ProblemDetail handleProjectNotFound(ProjectNotFoundException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problem.setTitle("Projekt nicht gefunden");
+        problem.setTitle("projekt not found");
         return problem;
     }
 
@@ -70,7 +71,7 @@ public class ApiExceptionHandler {
     public ProblemDetail handleQualificationMissing(QualificationMissingException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.CONFLICT, ex.getMessage());
-        problem.setTitle("Nicht vorhandene Qualifikation");
+        problem.setTitle("Lack of Qualifications");
         return problem;
     }
 
@@ -78,7 +79,7 @@ public class ApiExceptionHandler {
     public ProblemDetail handleEmployeeServiceNotAvailable(EmployeeServiceNotAvailableException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
-        problem.setTitle("Employee Service nicht erreichbar");
+        problem.setTitle("Employee Service is unavailable");
         return problem;
     }
 
@@ -89,5 +90,24 @@ public class ApiExceptionHandler {
         problem.setTitle("Mitarbeiter gleichzeitig in 2 Projekten");
         return problem;
     }
+
+    @ExceptionHandler(EmployeeAlreadyAssignedException.class)
+    public ProblemDetail handleEmployeeAlreadyAssigned(EmployeeAlreadyAssignedException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, ex.getMessage());
+
+        problem.setTitle("Mitarbeiter bereits im Projekt zugeordnet");
+
+        return problem;
+    }
+
+    @ExceptionHandler(ProjectTimeOverlapException.class)
+    public ProblemDetail handleProjectTimeOverlap(ProjectTimeOverlapException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Zeitliche Projektüberschneidung");
+        return problem;
+    }
+
 }
 
