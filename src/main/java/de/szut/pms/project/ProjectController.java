@@ -130,7 +130,7 @@ public class ProjectController {
                           "detail": "There is no project entry with the ID 99.",
                           "instance": "/projects/99/employees",
                           "status": 404,
-                          "title": "Not Found"
+                          "title": "Not found"
                         }
                         """)
             )
@@ -179,7 +179,7 @@ public class ProjectController {
                           "detail": "There is no project entry with the ID 99.",
                           "instance": "/projects/99",
                           "status": 404,
-                          "title": "Not Found"
+                          "title": "Not found"
                         }
                         """)
             )
@@ -278,7 +278,7 @@ public class ProjectController {
                           "detail": "There is no employee with the ID 2 in the project with the ID 1.",
                           "instance": "/projects/1/employees/2",
                           "status": 404,
-                          "title": "Not Found"
+                          "title": "Not found"
                         }
                         """)
             )

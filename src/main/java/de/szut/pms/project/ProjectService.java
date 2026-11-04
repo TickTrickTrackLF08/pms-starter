@@ -152,7 +152,7 @@ public class ProjectService {
             throw new ProjectEmployeeNotFoundException(projectId, employeeId);
         }
         repository.save(project);
-        return mapper.toRemoveEmployeeDTO(project);
+        return mapper.toProjectEmployeesDTO(project);
     }
 
     //Transaction is necessary because the mapper reads the LAZY-loaded employee list; without an open session, a LazyInitializationException would occur.

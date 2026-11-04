@@ -72,7 +72,7 @@ public class EmployeeController {
                           "detail": "Employee with ID 10 not found.",
                           "instance": "/employees/10/projects",
                           "status": 404,
-                          "title": "Not Found"
+                          "title": "Not found"
                         }
                         """)
             )
