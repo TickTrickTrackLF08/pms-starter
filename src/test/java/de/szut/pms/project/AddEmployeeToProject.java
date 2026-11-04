@@ -18,81 +18,45 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class AddEmployeeToProject extends AbstractIntegrationTest {
-
-    private final String validRequest = """
-            {
-               "employeeId": 1,
-               "qualificationID": 3
-             }
-        """;
+class AddEmployeeToProject extends AbstractIntegrationTest {
 
     @BeforeEach
     void setup() {
-        when(employeeClient.findById(1L)).thenReturn(new EmployeeDto(
-                1L,
-                "Mustermann",
-                "Max",
-                "",
-                "",
-                "",
-                "",
-                List.of(new SkillDto("Qualifikation 3",3L))));
+        when(employeeClient.findById(1L)).thenReturn(
+                new EmployeeDto(
+                        1L, "Mustermann", "Max", "", "", "", "",
+                        List.of(new SkillDto("Qualifikation 3", 3L))
+                )
+        );
     }
-
 
     @Test
     @WithMockUser
-    void addEmployeeToProjectWithValidIdAndValidQualification()
-            throws Exception {
+    void addEmployeeToProjectWithValidIdAndValidQualification() throws Exception {
+        Project project = createProject();
 
-        // Create a project
-        Project project = new Project();
-        project.setDescription("Test project");
-        project.setResponsibleEmployeeId(2L);
-        project.setCustomerId(1L);
-        project.setCustomerServiceRepresentative("Max");
-        project.setStartDate(LocalDate.of(2026, 1, 1));
-        project.setEndDate(LocalDate.of(2026, 1, 10));
+        mockMvc.perform(addEmployeeRequest(project.getId(), """
+                {
+                    "employeeId": 1,
+                    "qualificationID": 3
+                }
+                """))
+                .andExpect(status().isOk());
 
-        project = projectRepository.save(project);
-
-        // Call the REST endpoint
-        mockMvc.perform(
-                post("/projects/" + project.getId() + "/employees")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(validRequest)
-        ).andExpect(status().isOk());
-
-        // Check if the employee was added
         Assertions.assertEquals(1, projectEmployeeRepository.count());
 
-        // Retrieve the saved assignment
-        ProjectEmployee assignment = projectEmployeeRepository.findAll().get(0);
+        ProjectEmployee employee = projectEmployeeRepository.findAll().getFirst();
 
-        // Verify that the saved data matches the request
-        Assertions.assertEquals(1L, assignment.getEmployeeId());
-        Assertions.assertEquals(3L, assignment.getQualificationID());
-        Assertions.assertEquals(project.getId(), assignment.getProject().getId());
+        Assertions.assertEquals(1L, employee.getEmployeeId());
+        Assertions.assertEquals(3L, employee.getQualificationID());
+        Assertions.assertEquals(project.getId(), employee.getProject().getId());
     }
-
 
     @Test
     @WithMockUser
     void addEmployeeToProjectWithInvalidQualification() throws Exception {
+        Project project = createProject();
 
-        // Create a project
-        Project project = new Project();
-        project.setDescription("Test project");
-        project.setResponsibleEmployeeId(2L);
-        project.setCustomerId(1L);
-        project.setCustomerServiceRepresentative("Max");
-        project.setStartDate(LocalDate.of(2026, 1, 1));
-        project.setEndDate(LocalDate.of(2026, 1, 10));
-
-        project = projectRepository.save(project);
-
-        // Mock employee with a different qualification
         when(employeeClient.findById(1L)).thenReturn(
                 new EmployeeDto(
                         1L, "Mustermann", "Max", "", "", "", "",
@@ -100,61 +64,53 @@ public class AddEmployeeToProject extends AbstractIntegrationTest {
                 )
         );
 
-        // Call the REST endpoint
-        mockMvc.perform(
-                post("/projects/" + project.getId() + "/employees")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(validRequest)
-        ).andExpect(status().isConflict());
+        mockMvc.perform(addEmployeeRequest(project.getId(), """
+                {
+                    "employeeId": 1,
+                    "qualificationID": 3
+                }
+                """))
+                .andExpect(status().isConflict());
 
-        // Check that no employee was assigned
         Assertions.assertEquals(0, projectEmployeeRepository.count());
     }
-
 
     @Test
     @WithMockUser
     void addEmployeeToProjectWithNonExistingEmployee() throws Exception {
-        // Create a project
-        Project project = new Project();
-        project.setDescription("Test project");
-        project.setResponsibleEmployeeId(2L);
-        project.setCustomerId(1L);
-        project.setCustomerServiceRepresentative("Max");
-        project.setStartDate(LocalDate.of(2026, 1, 1));
-        project.setEndDate(LocalDate.of(2026, 1, 10));
+        Project project = createProject();
 
-        project = projectRepository.save(project);
-
-        // Mock a non-existing employee
         when(employeeClient.findById(10L)).thenThrow(
                 new ResourceNotFoundException("Employee with ID 10 not found")
         );
 
-        String request = """
-        {
-            "employeeId": 10,
-            "qualificationID": 1
-        }
-        """;
+        mockMvc.perform(addEmployeeRequest(project.getId(), """
+                {
+                    "employeeId": 10,
+                    "qualificationID": 1
+                }
+                """))
+                .andExpect(status().isNotFound());
 
-        // Call the REST endpoint
-        mockMvc.perform(
-                post("/projects/" + project.getId() + "/employees")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request)
-        ).andExpect(status().isNotFound());
-
-        // Check that no employee was assigned
         Assertions.assertEquals(0, projectEmployeeRepository.count());
     }
-
 
     @Test
     @WithMockUser
     void addEmployeeToProjectWithoutQualification() throws Exception {
+        Project project = createProject();
 
-        // Create a project
+        mockMvc.perform(addEmployeeRequest(project.getId(), """
+                {
+                    "employeeId": 1
+                }
+                """))
+                .andExpect(status().isBadRequest());
+
+        Assertions.assertEquals(0, projectEmployeeRepository.count());
+    }
+
+    private Project createProject() {
         Project project = new Project();
         project.setDescription("Test project");
         project.setResponsibleEmployeeId(2L);
@@ -163,21 +119,14 @@ public class AddEmployeeToProject extends AbstractIntegrationTest {
         project.setStartDate(LocalDate.of(2026, 1, 1));
         project.setEndDate(LocalDate.of(2026, 1, 10));
 
-        project = projectRepository.save(project);
-
-        // Call the REST endpoint without a qualification ID
-        mockMvc.perform(
-                post("/projects/" + project.getId() + "/employees")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                            {
-                                "employeeId": 1
-                            }
-                            """)
-        ).andExpect(status().isBadRequest());
-
-        // Check that no employee was assigned
-        Assertions.assertEquals(0, projectEmployeeRepository.count());
+        return projectRepository.save(project);
     }
 
+    private org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder addEmployeeRequest(
+            Long projectId, String json
+    ) {
+        return post("/projects/" + projectId + "/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+    }
 }

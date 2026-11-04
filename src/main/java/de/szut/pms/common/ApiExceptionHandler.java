@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import de.szut.pms.customer.CustomerNotFoundException;
 import de.szut.pms.project.ProjectNotFoundException;
 import de.szut.pms.employee.EmployeeServiceNotAvailableException;
 import de.szut.pms.project.EmployeeTimeConflictException;
@@ -121,6 +122,18 @@ public class ApiExceptionHandler {
         body.put("message", ex.getMessage());
 
         return ResponseEntity.badRequest().body(body);
+    }
+
+    @ExceptionHandler(CustomerNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleCustomerNotFound(
+            CustomerNotFoundException exception) {
+
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
     }
 
 }
