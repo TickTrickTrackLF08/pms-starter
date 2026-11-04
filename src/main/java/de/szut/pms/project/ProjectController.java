@@ -55,8 +55,8 @@ public class ProjectController {
                             }
                           ]
                         }
-                        """)
-            )
+                    """)
+    )
     )
     @ApiResponse(
             responseCode = "400",
@@ -301,6 +301,7 @@ public class ProjectController {
                         """)
             )
     )
+    @ApiResponse(responseCode = "401", description = "Invalider JWT")
     @DeleteMapping("/{projectId}/employees/{employeeId}")
     public ResponseEntity<ProjectEmployeeRemoveDTO> removeEmployee(@PathVariable Long projectId, @PathVariable Long employeeId) {
         ProjectEmployeeRemoveDTO projectEmployeeRemoveDTO = service.removeEmployee(projectId, employeeId);
@@ -308,10 +309,25 @@ public class ProjectController {
     }
 
 
+    @Operation(summary = "Update the details of a project")
+    @ApiResponse(responseCode = "200", description = "Project Successfully Updated")
+    @ApiResponse(responseCode = "400", description = "Invalid input data")
+    @ApiResponse(responseCode = "404", description = "Project or referenced resource not found")
+    @ApiResponse(responseCode = "409", description = "Der Mitarbeiter wird während dieses Zeitraums einem anderen Projekt zugewiesen.")
+    @PutMapping("/{id}")
+    public ResponseEntity<ProjectDTO> update(
+            @PathVariable Long id,
+            @RequestBody @Valid UpdateProjectDTO dto
+    ) {
+        return ResponseEntity.ok(service.update(id, dto));
+    }
+
+
     @Operation(summary = "Add an employee to a project")
     @ApiResponse(responseCode = "200", description = "Employee successfully added")
     @ApiResponse(responseCode = "404", description = "Project or employee not found")
     @ApiResponse(responseCode = "400", description = "Invalid request or employee already assigned")
+    @ApiResponse(responseCode = "409", description = "The employee is assigned to another project during that period.")
     @PostMapping("/{projectId}/employees")
     public ResponseEntity<ProjectDTO> addEmployeeToProject(
             @PathVariable Long projectId,

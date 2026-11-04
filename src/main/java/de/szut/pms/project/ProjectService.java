@@ -177,4 +177,53 @@ public class ProjectService {
         return mapper.toDTO(saved);
     }
 
+    @Transactional
+    public ProjectDTO update(Long id, UpdateProjectDTO dto) {
+
+        Project project = repository.findById(id)
+                .orElseThrow(() -> new ProjectNotFoundException(id));
+
+        // Kunde prüfen
+        if (!customerClient.existsById(dto.customerId())) {
+            throw new CustomerNotFoundException(dto.customerId());
+        }
+
+        // Projektleiter prüfen
+        qualificationService.validateEmployee(
+                dto.responsibleEmployeeId()
+        );
+
+        // Prüfen, ob sich der Projektzeitraum verändert hat
+        boolean datesChanged =
+                !project.getStartDate().equals(dto.startDate())
+                        || !project.getEndDate().equals(dto.endDate());
+
+        if (datesChanged) {
+
+            // Alle bereits zugeordneten Mitarbeiter prüfen
+            for (ProjectEmployee employee : project.getEmployee()) {
+
+                boolean overlapping = repository.existsOverlappingProject(
+                        employee.getEmployeeId(),
+                        id,
+                        dto.startDate(),
+                        dto.endDate()
+                );
+
+                if (overlapping) {
+                    throw new ProjectTimeOverlapException(
+                            employee.getEmployeeId()
+                    );
+                }
+            }
+        }
+
+        // Projektdaten aktualisieren
+        mapper.updateEntity(project, dto);
+
+        Project updated = repository.save(project);
+
+        return mapper.toDTO(updated);
+    }
+
 }
