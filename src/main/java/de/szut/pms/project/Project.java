@@ -19,7 +19,7 @@ import java.util.List;
 public class Project {
 
     public void addEmployee(ProjectEmployee projectEmployee) {
-        employee.add(projectEmployee);
+        employees.add(projectEmployee);
         projectEmployee.setProject(this);
     }
 
@@ -55,6 +55,6 @@ public class Project {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<ProjectEmployee> employee = new ArrayList<>();
+    private List<ProjectEmployee> employees = new ArrayList<>();
 
 }

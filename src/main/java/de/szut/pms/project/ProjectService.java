@@ -9,10 +9,9 @@ import de.szut.pms.employee.EmployeeQualificationService;
 import de.szut.pms.projectemployee.CreateProjectEmployeeDTO;
 import de.szut.pms.projectemployee.EmployeeAlreadyAssignedException;
 import de.szut.pms.projectemployee.ProjectEmployee;
-import de.szut.pms.projectemployee.ProjectEmployeeService;
+import de.szut.pms.projectemployee.ProjectEmployeeNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
-import de.szut.pms.projectemployee.ProjectEmployeeNotFoundException;
 
 import java.util.List;
 
@@ -52,6 +51,17 @@ public class ProjectService {
                         projectEmployee.qualificationID()
                 );
             }
+        }
+
+        // Check if the responsibleEmployeeId is part of the projectEmployees
+        if (dto.projectEmployees() != null &&
+                dto.projectEmployees().stream()
+                        .anyMatch(employee ->
+                                employee.employeeId().equals(dto.responsibleEmployeeId()))) {
+
+            throw new ResponsibleEmployeeAlreadyAssignedException(
+                    dto.responsibleEmployeeId()
+            );
         }
 
         // Check whether the project manager exists
@@ -98,7 +108,7 @@ public class ProjectService {
 
         List<EmployeeProjectDTO> projects = repository.findByEmployeeId(employeeId).stream()
                 .map(project -> {
-                    Long qualificationId = project.getEmployee().stream()
+                    Long qualificationId = project.getEmployees().stream()
                             .filter(pe -> pe.getEmployeeId().equals(employeeId))
                             .map(ProjectEmployee::getQualificationID)
                             .findFirst()
@@ -129,19 +139,19 @@ public class ProjectService {
      * @throws ProjectEmployeeNotFoundException if the employee is not assigned to the project
      */
     @Transactional
-    public ProjectEmployeeRemoveDTO removeEmployee(Long projectId, Long employeeId){
+    public ProjectEmployeesDTO removeEmployee(Long projectId, Long employeeId){
         Project project = repository.findById(projectId)
                 .orElseThrow(()->new ProjectNotFoundException(projectId));
 
         ProjectEmployee deleteEmployee = null;
-        for(ProjectEmployee employee: project.getEmployee()){
+        for(ProjectEmployee employee: project.getEmployees()){
             if(employeeId.equals(employee.getEmployeeId())){
                 deleteEmployee = employee;
                 break;
             }
         }
         if(deleteEmployee != null){
-            project.getEmployee().remove(deleteEmployee);
+            project.getEmployees().remove(deleteEmployee);
         }else{
             throw new ProjectEmployeeNotFoundException(projectId, employeeId);
         }
@@ -165,7 +175,7 @@ public class ProjectService {
                 .orElseThrow(() -> new ProjectNotFoundException(projectId));
 
         // Prüfen, ob Mitarbeiter bereits zugeordnet ist
-        boolean alreadyAssigned = project.getEmployee().stream()
+        boolean alreadyAssigned = project.getEmployees().stream()
                 .anyMatch(employee ->
                         employee.getEmployeeId().equals(dto.employeeId()));
         // Falls der Mitarbeiter bereits zugeordnet ist, wird eine Exception geworfen
@@ -212,33 +222,11 @@ public class ProjectService {
                 dto.responsibleEmployeeId()
         );
 
-        // Prüfen, ob sich der Projektzeitraum verändert hat
-        boolean datesChanged =
-                !project.getStartDate().equals(dto.startDate())
-                        || !project.getEndDate().equals(dto.endDate());
-
-        if (datesChanged) {
-
-            // Alle bereits zugeordneten Mitarbeiter prüfen
-            for (ProjectEmployee employee : project.getEmployee()) {
-
-                boolean overlapping = repository.existsOverlappingProject(
-                        employee.getEmployeeId(),
-                        id,
-                        dto.startDate(),
-                        dto.endDate()
-                );
-
-                if (overlapping) {
-                    throw new ProjectTimeOverlapException(
-                            employee.getEmployeeId()
-                    );
-                }
-            }
-        }
-
         // Projektdaten aktualisieren
         mapper.updateEntity(project, dto);
+
+        // Verfügbarkeit mit den aktualisierten Daten prüfen
+        availabilityService.validateNoTimeOverlap(project);
 
         Project updated = repository.save(project);
 

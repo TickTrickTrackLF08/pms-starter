@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Schema(description = "Data for Creating a New Project")
+@ValidProjectDates
 public record CreateProjectDTO(
 
         @Schema(description = "Project Description", example = "Website Relaunch for the Client")
@@ -55,15 +56,5 @@ public record CreateProjectDTO(
                 """)
         List<@Valid CreateProjectEmployeeDTO> projectEmployees
 
-) {
-
-        public CreateProjectDTO {
-                if (startDate != null && endDate != null
-                        && !startDate.isBefore(endDate)) {
-                        throw new IllegalArgumentException(
-                                "The start date must be before the end date."
-                        );
-                }
-        }
-
+) implements ProjectDateRange {
 }

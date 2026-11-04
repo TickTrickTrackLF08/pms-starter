@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Schema(description = "Daten zum Aktualisieren eines bestehenden Projekts")
+@ValidProjectDates
 public record UpdateProjectDTO(
 
         @NotNull(message = "Die Projektbeschreibung darf nicht fehlen.")
@@ -31,13 +32,5 @@ public record UpdateProjectDTO(
         @NotNull(message = "Ein verantwortlicher interner Mitarbeiter muss angegeben werden.")
         Long responsibleEmployeeId
 
-) {
-    public UpdateProjectDTO {
-        if (startDate != null && endDate != null
-                && !startDate.isBefore(endDate)) {
-            throw new IllegalArgumentException(
-                    "Das Startdatum muss vor dem Enddatum liegen."
-            );
-        }
-    }
+) implements ProjectDateRange {
 }

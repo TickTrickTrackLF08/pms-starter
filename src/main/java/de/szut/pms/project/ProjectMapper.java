@@ -19,6 +19,7 @@ public class ProjectMapper {
 
     public ProjectDTO toDTO(Project entity) {
         ProjectDTO dto = new ProjectDTO();
+
         dto.setId(entity.getId());
         dto.setDescription(entity.getDescription());
         dto.setComment(entity.getComment());
@@ -29,7 +30,7 @@ public class ProjectMapper {
         dto.setResponsibleEmployeeId(entity.getResponsibleEmployeeId());
 
         List<ProjectEmployeeDTO> dtos = new ArrayList<>();
-        for (ProjectEmployee employee : entity.getEmployee()) {
+        for (ProjectEmployee employee : entity.getEmployees()) {
             dtos.add(projectEmployeeMapper.toDTO(employee));
         }
 
@@ -40,19 +41,17 @@ public class ProjectMapper {
 
     public ProjectEmployeesDTO toProjectEmployeesDTO(Project entity) {
         ProjectEmployeesDTO dto = new ProjectEmployeesDTO();
+
         dto.setProjectId(entity.getId());
         dto.setDescription(entity.getDescription());
         List<ProjectEmployeeDTO> dtos = new ArrayList<>();
-        for (ProjectEmployee employee : entity.getEmployee()) {
+        for (ProjectEmployee employee : entity.getEmployees()) {
             dtos.add(projectEmployeeMapper.toDTO(employee));
         }
 
         dto.setEmployees(dtos);
         return dto;
     }
-
-    public Project toEntity(ProjectDTO dto) {return new Project();}
-
 
 
     public ProjectOverviewDTO toOverviewDTO(Project entity) {
@@ -106,16 +105,17 @@ public class ProjectMapper {
      * @return a DTO containing the project data and assigned employees,
      * according to the response criteria (just the id, description and updated employee-list)
      */
-    public ProjectEmployeeRemoveDTO toRemoveEmployeeDTO(Project entity){
-        ProjectEmployeeRemoveDTO dto = new ProjectEmployeeRemoveDTO();
-        dto.setId(entity.getId());
+    public ProjectEmployeesDTO toRemoveEmployeeDTO(Project entity){
+        ProjectEmployeesDTO dto = new ProjectEmployeesDTO();
+
+        dto.setProjectId(entity.getId());
         dto.setDescription(entity.getDescription());
 
         List<ProjectEmployeeDTO> dtos = new ArrayList<>();
-        for (ProjectEmployee employee : entity.getEmployee()) {
+        for (ProjectEmployee employee : entity.getEmployees()) {
             dtos.add(projectEmployeeMapper.toDTO(employee));
         }
-        dto.setProjectEmployees(dtos);
+        dto.setEmployees(dtos);
         return dto;
     }
 

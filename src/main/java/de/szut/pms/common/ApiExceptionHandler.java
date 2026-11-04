@@ -1,17 +1,19 @@
 package de.szut.pms.common;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import de.szut.pms.project.ProjectNotFoundException;
 import de.szut.pms.employee.EmployeeServiceNotAvailableException;
-import de.szut.pms.project.ProjectTimeOverlapException;
 import de.szut.pms.project.EmployeeTimeConflictException;
+import de.szut.pms.project.ResponsibleEmployeeAlreadyAssignedException;
 import de.szut.pms.projectemployee.EmployeeAlreadyAssignedException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -39,14 +41,31 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidation(MethodArgumentNotValidException ex) {
+
         Map<String, String> errors = new LinkedHashMap<>();
+
         ex.getBindingResult().getFieldErrors().forEach(
-                error -> errors.put(error.getField(), error.getDefaultMessage()));
+                error -> errors.put(
+                        error.getField(),
+                        error.getDefaultMessage()
+                )
+        );
+
+        ex.getBindingResult().getGlobalErrors().forEach(
+                error -> errors.put(
+                        "projectDates",
+                        error.getDefaultMessage()
+                )
+        );
 
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-                HttpStatus.BAD_REQUEST, "The request contains invalid fields");
+                HttpStatus.BAD_REQUEST,
+                "The request contains invalid fields"
+        );
+
         problem.setTitle("Invalid input");
         problem.setProperty("errors", errors);
+
         return problem;
     }
 
@@ -92,12 +111,16 @@ public class ApiExceptionHandler {
         return problem;
     }
 
-    @ExceptionHandler(ProjectTimeOverlapException.class)
-    public ProblemDetail handleProjectTimeOverlap(ProjectTimeOverlapException ex) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-                HttpStatus.CONFLICT, ex.getMessage());
-        problem.setTitle("Zeitliche Projektüberschneidung");
-        return problem;
+    @ExceptionHandler(ResponsibleEmployeeAlreadyAssignedException.class)
+    public ResponseEntity<Map<String, Object>> handleResponsibleEmployeeAlreadyAssigned(
+            ResponsibleEmployeeAlreadyAssignedException ex) {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", 400);
+        body.put("error", "Bad Request");
+        body.put("message", ex.getMessage());
+
+        return ResponseEntity.badRequest().body(body);
     }
 
 }
