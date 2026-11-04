@@ -268,7 +268,7 @@ public class ProjectController {
                         """)
             )
     )
-    @ApiResponse(responseCode = "401", description = "Invalider JWT")
+    @ApiResponse(responseCode = "401", description = "Invalid JWT")
     @DeleteMapping("/{projectId}/employees/{employeeId}")
     public ResponseEntity<ProjectEmployeesDTO> removeEmployee(@PathVariable Long projectId, @PathVariable Long employeeId) {
         ProjectEmployeesDTO projectEmployeeRemoveDTO = service.removeEmployee(projectId, employeeId);

@@ -17,6 +17,7 @@ import java.util.List;
 
 public class DeleteTest extends AbstractIntegrationTest {
 
+
     @Test
     @WithMockUser
     void deleteRemovesProject() throws Exception {

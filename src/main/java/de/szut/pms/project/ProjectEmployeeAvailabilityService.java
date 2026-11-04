@@ -15,6 +15,11 @@ public class ProjectEmployeeAvailabilityService {
         this.repository = repository;
     }
 
+    /**
+     * Retrieves a project, that is about to be saved and checks whether it's employees bolong already
+     * to another project
+     * @param givenProject that should be saved/created/changed
+     */
     public void validateNoTimeOverlap(Project givenProject) {
 
         List<Project> projects = repository.findAll();

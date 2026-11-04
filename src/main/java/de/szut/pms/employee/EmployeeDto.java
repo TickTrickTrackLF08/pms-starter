@@ -2,6 +2,7 @@ package de.szut.pms.employee;
 
 import java.util.List;
 
+//Corresponds to Employee-Service response
 public record EmployeeDto(
         Long id,
         String lastName,

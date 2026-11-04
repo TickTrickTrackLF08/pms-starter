@@ -99,7 +99,12 @@ public class ProjectMapper {
         return entity;
     }
 
-
+    /**
+     * Maps a project entity to a ProjectEmployeeRemoveDTO.
+     * @param entity the updated project to map
+     * @return a DTO containing the project data and assigned employees,
+     * according to the response criteria (just the id, description and updated employee-list)
+     */
     public ProjectEmployeesDTO toRemoveEmployeeDTO(Project entity){
         ProjectEmployeesDTO dto = new ProjectEmployeesDTO();
 
