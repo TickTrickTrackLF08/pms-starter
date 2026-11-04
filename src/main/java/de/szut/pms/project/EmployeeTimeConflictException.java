@@ -5,8 +5,8 @@ public class EmployeeTimeConflictException extends RuntimeException {
         super(message);
     }
     public EmployeeTimeConflictException(Long givenProjectId, Long projectId, Long employeeId) {
-        super("In deinem Projekt mit der ID " + givenProjectId + " überschneidet sich mindestens ein Mitarbeiter mit dem Project " + projectId + "." +
-            " Zuletzt geprüfter Mitarbeiter: " + employeeId + ".");
+        super("In your project with the ID " + givenProjectId + " at least one employee overlaps with the project " + projectId + "." +
+            "Most Recently Audited Employee: " + employeeId + ".");
     }
 
 }

@@ -1,4 +1,4 @@
-package de.szut.pms.IntegrationsTests;
+package de.szut.pms.project;
 
 import de.szut.pms.employee.EmployeeDto;
 import de.szut.pms.employee.SkillDto;

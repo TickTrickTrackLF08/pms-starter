@@ -5,11 +5,11 @@ import jakarta.validation.constraints.NotNull;
 
 public record AddProjectEmployeeDTO(
 
-        @NotNull(message = "Eine Mitarbeiter-ID muss angegeben werden.")
+        @NotNull(message = "An employee ID must be provided.")
         @Schema(example = "15")
         Long employeeId,
 
-        @NotNull(message = "Eine Qualifikations-ID muss angegeben werden.")
+        @NotNull(message = "A qualification ID must be provided.")
         @Schema(example = "2")
         Long qualificationID
 

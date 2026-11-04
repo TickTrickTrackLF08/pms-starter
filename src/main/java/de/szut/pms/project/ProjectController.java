@@ -86,13 +86,13 @@ public class ProjectController {
     )
     @ApiResponse(
             responseCode = "409",
-            description = "Ein Mitarbeiter besitzt nicht die erforderliche Qualifikation"
+            description = "An employee does not have the required qualifications"
     )
     @ApiResponse(
             responseCode = "503",
-            description = "Der Employee-Service ist nicht erreichbar"
+            description = "The Employee Service is unavailable"
     )
-    @ApiResponse(responseCode = "409", description="Mindestens ein Mitarbeiter ist im angegebenen Zeitraum bereits einem anderen Projekt zugeordnet")
+    @ApiResponse(responseCode = "409", description="At least one employee is already assigned to another project during the specified time period")
     @PostMapping
     public ResponseEntity<ProjectDTO> create(@RequestBody @Valid CreateProjectDTO dto) {
         ProjectDTO created = service.create(dto);
@@ -315,7 +315,7 @@ public class ProjectController {
     @ApiResponse(responseCode = "200", description = "Project Successfully Updated")
     @ApiResponse(responseCode = "400", description = "Invalid input data")
     @ApiResponse(responseCode = "404", description = "Project or referenced resource not found")
-    @ApiResponse(responseCode = "409", description = "Der Mitarbeiter wird während dieses Zeitraums einem anderen Projekt zugewiesen.")
+    @ApiResponse(responseCode = "409", description = "During this period, the employee will be assigned to another project.")
     @PutMapping("/{id}")
     public ResponseEntity<ProjectDTO> update(
             @PathVariable Long id,
