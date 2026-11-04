@@ -5,6 +5,7 @@ import java.util.Map;
 
 import de.szut.pms.project.ProjectNotFoundException;
 import de.szut.pms.employee.EmployeeServiceNotAvailableException;
+import de.szut.pms.project.ProjectTimeOverlapException;
 import de.szut.pms.project.EmployeeTimeConflictException;
 import de.szut.pms.projectemployee.EmployeeAlreadyAssignedException;
 import org.springframework.core.Ordered;
@@ -97,6 +98,14 @@ public class ApiExceptionHandler {
 
         problem.setTitle("Mitarbeiter bereits im Projekt zugeordnet");
 
+        return problem;
+    }
+
+    @ExceptionHandler(ProjectTimeOverlapException.class)
+    public ProblemDetail handleProjectTimeOverlap(ProjectTimeOverlapException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Zeitliche Projektüberschneidung");
         return problem;
     }
 }
