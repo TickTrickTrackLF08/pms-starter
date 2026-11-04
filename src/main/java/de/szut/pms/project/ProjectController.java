@@ -29,7 +29,7 @@ public class ProjectController {
     }
 
 
-    @Operation(summary = "Lege ein neues Projekt an")
+    @Operation(summary = "Create a new project")
     @ApiResponse(
             responseCode = "201",
             description = "Projekt wurde angelegt",
@@ -91,6 +91,7 @@ public class ProjectController {
         return ResponseEntity.created(location).body(created);
     }
 
+    @Operation(summary = "Get all employees from a project")
     @ApiResponse(responseCode = "200", description = "Gesuchtes Projekt mit Mitarbeiter erhalten")
     @ApiResponse(responseCode = "400", description = "Fehler in der Anfrage, möglich das die ID keine Zahl ist",content = @Content(mediaType = "application/problem+json"))
     @ApiResponse(responseCode = "404", description = "Projekt nicht gefunden",content = @Content(mediaType = "application/problem+json"))
@@ -99,6 +100,7 @@ public class ProjectController {
         return ResponseEntity.ok().body(service.findAllEmployeesOfProjectOneByID(id));
     }
 
+    @Operation(summary = "Get all information about a project.")
     @ApiResponse(responseCode = "200", description = "Gesuchtes Projekt erhalten")
     @ApiResponse(responseCode = "400", description = "Fehler in der Anfrage, möglich das die ID keine Zahl ist",content = @Content(mediaType = "application/problem+json"))
     @ApiResponse(responseCode = "404", description = "Projekt nicht gefunden",content = @Content(mediaType = "application/problem+json"))
@@ -108,7 +110,7 @@ public class ProjectController {
     }
 
 
-    @Operation(summary = "Erhalte eine Liste aller Projekte")
+    @Operation(summary = "Get a list of all projects")
     @ApiResponse(responseCode = "200", description = "Projekte erfolgreich abgerufen")
     @ApiResponse(responseCode = "500", description = "Interner Serverfehler")
     @GetMapping
@@ -129,13 +131,32 @@ public class ProjectController {
     @Operation(summary = "Remove an employee from project")
     @ApiResponse(responseCode = "200", description = "Employee successfully removed")
     @ApiResponse(responseCode = "404", description = "Projekt(Id) existiert nicht oder Mitarbeiter ist dem Projekt nicht zugeordnet")
-//  @ApiResponse(responseCode = "404", description = "Projekt(Id) existiert nicht")
-//  @ApiResponse(responseCode = "404", description = "Mitarbeiter ist dem Projekt nicht zugeordnet")
     @ApiResponse(responseCode = "401", description = "Invalider JWT")
     @DeleteMapping("/{projectId}/employees/{employeeId}")
     public ResponseEntity<ProjectEmployeeRemoveDTO> removeEmployee(@PathVariable Long projectId, @PathVariable Long employeeId){
         ProjectEmployeeRemoveDTO projectEmployeeRemoveDTO = service.removeEmployee(projectId, employeeId);
         return ResponseEntity.ok(projectEmployeeRemoveDTO);
+    }
+
+    @Operation(summary = "Update the details of a project")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Projekt erfolgreich aktualisiert"
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "Ungültige Eingabedaten"
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "Projekt oder referenzierte Ressource nicht gefunden"
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<ProjectDTO> update(
+            @PathVariable Long id,
+            @RequestBody @Valid UpdateProjectDTO dto
+    ) {
+        return ResponseEntity.ok(service.update(id, dto));
     }
 
 }

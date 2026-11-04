@@ -23,7 +23,7 @@ public class EmployeeController {
         this.projectService = projectService;
     }
 
-    @Operation(summary = "Erhalte eine Liste aller Projekte, an denen ein Mitarbeiter arbeitet")
+    @Operation(summary = "Get a list of all projects an employee is working on")
     @ApiResponse(
             responseCode = "200",
             description = "Projekte erfolgreich abgerufen",

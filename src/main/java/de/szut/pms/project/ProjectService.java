@@ -1,6 +1,5 @@
 package de.szut.pms.project;
 
-import de.szut.pms.common.ResourceNotFoundException;
 import de.szut.pms.customer.CustomerClient;
 import de.szut.pms.customer.CustomerNotFoundException;
 import de.szut.pms.employee.EmployeeProjectDTO;
@@ -128,6 +127,32 @@ public class ProjectService {
     public ProjectEmployeesDTO findAllEmployeesOfProjectOneByID(Long id) {
         Project project =  repository.findById(id).orElseThrow(() -> new ProjectNotFoundException(id));
         return mapper.toProjectEmployeesDTO(project);
+    }
+
+    @Transactional
+    public ProjectDTO update(Long id, UpdateProjectDTO dto) {
+
+        // Prüfen, ob das Projekt existiert
+        Project project = repository.findById(id)
+                .orElseThrow(() -> new ProjectNotFoundException(id));
+
+        // Prüfen, ob der Kunde existiert
+        if (!customerClient.existsById(dto.customerId())) {
+            throw new CustomerNotFoundException(dto.customerId());
+        }
+
+        // Prüfen, ob der verantwortliche Mitarbeiter existiert
+        qualificationService.validateEmployee(
+                dto.responsibleEmployeeId()
+        );
+
+        // Projektdaten aktualisieren
+        mapper.updateEntity(project, dto);
+
+        // Projekt speichern
+        Project updated = repository.save(project);
+
+        return mapper.toDTO(updated);
     }
 
 }
