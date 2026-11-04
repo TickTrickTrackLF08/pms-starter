@@ -51,26 +51,6 @@ public class ProjectMapper {
         return dto;
     }
 
-    public Project toEntity(ProjectDTO dto) {return new Project();}
-
-
-
-    public ProjectOverviewDTO toOverviewDTO(Project entity) {
-        ProjectOverviewDTO dto = new ProjectOverviewDTO();
-
-        dto.setId(entity.getId());
-        dto.setDescription(entity.getDescription());
-        dto.setComment(entity.getComment());
-        dto.setCustomerId(entity.getCustomerId());
-        dto.setCustomerServiceRepresentative(entity.getCustomerServiceRepresentative());
-        dto.setStartDate(entity.getStartDate());
-        dto.setEndDate(entity.getEndDate());
-        dto.setResponsibleEmployeeId(entity.getResponsibleEmployeeId());
-
-        return dto;
-    }
-
-
     public Project toEntity(CreateProjectDTO dto) {
         Project entity = new Project();
 
@@ -114,7 +94,6 @@ public class ProjectMapper {
         return dto;
     }
 
-
     public void updateEntity(Project entity, UpdateProjectDTO dto) {
 
         entity.setDescription(dto.description());
@@ -129,5 +108,4 @@ public class ProjectMapper {
         entity.setStartDate(dto.startDate());
         entity.setEndDate(dto.endDate());
     }
-
 }

@@ -9,7 +9,6 @@ import de.szut.pms.employee.EmployeeQualificationService;
 import de.szut.pms.projectemployee.CreateProjectEmployeeDTO;
 import de.szut.pms.projectemployee.EmployeeAlreadyAssignedException;
 import de.szut.pms.projectemployee.ProjectEmployee;
-import de.szut.pms.projectemployee.ProjectEmployeeService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import de.szut.pms.projectemployee.ProjectEmployeeNotFoundException;
@@ -25,8 +24,6 @@ public class ProjectService {
     private final EmployeeQualificationService qualificationService;
     private final ProjectEmployeeAvailabilityService availabilityService;
 
-
-
     public ProjectService(ProjectRepository repository, ProjectMapper mapper, CustomerClient customerClient, EmployeeQualificationService qualificationService, ProjectEmployeeAvailabilityService availabilityService) {
         this.repository = repository;
         this.mapper = mapper;
@@ -34,7 +31,6 @@ public class ProjectService {
         this.qualificationService = qualificationService;
         this.availabilityService = availabilityService;
     }
-
 
     @Transactional
     public ProjectDTO create(CreateProjectDTO dto) {
@@ -86,9 +82,9 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProjectOverviewDTO> findAll() {
+    public List<ProjectDTO> findAll() {
         return repository.findAll().stream()
-                .map(mapper::toOverviewDTO)
+                .map(mapper::toDTO)
                 .toList();
     }
 
