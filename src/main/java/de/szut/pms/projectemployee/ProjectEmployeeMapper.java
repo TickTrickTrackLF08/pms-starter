@@ -12,6 +12,4 @@ public class ProjectEmployeeMapper {
         dto.setQualificationID(entity.getQualificationID());
         return dto;
     }
-
-    public ProjectEmployee toEntity(ProjectEmployeeDTO dto) {return new ProjectEmployee();}
 }
