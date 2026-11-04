@@ -1,16 +1,19 @@
 package de.szut.pms.common;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import de.szut.pms.project.ProjectNotFoundException;
 import de.szut.pms.employee.EmployeeServiceNotAvailableException;
 import de.szut.pms.project.EmployeeTimeConflictException;
+import de.szut.pms.project.ResponsibleEmployeeAlreadyAssignedException;
 import de.szut.pms.projectemployee.EmployeeAlreadyAssignedException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -106,6 +109,18 @@ public class ApiExceptionHandler {
         problem.setTitle("Mitarbeiter bereits im Projekt zugeordnet");
 
         return problem;
+    }
+
+    @ExceptionHandler(ResponsibleEmployeeAlreadyAssignedException.class)
+    public ResponseEntity<Map<String, Object>> handleResponsibleEmployeeAlreadyAssigned(
+            ResponsibleEmployeeAlreadyAssignedException ex) {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", 400);
+        body.put("error", "Bad Request");
+        body.put("message", ex.getMessage());
+
+        return ResponseEntity.badRequest().body(body);
     }
 
 }

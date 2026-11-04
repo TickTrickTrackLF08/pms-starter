@@ -53,6 +53,17 @@ public class ProjectService {
             }
         }
 
+        // Check if the responsibleEmployeeId is part of the projectEmployees
+        if (dto.projectEmployees() != null &&
+                dto.projectEmployees().stream()
+                        .anyMatch(employee ->
+                                employee.employeeId().equals(dto.responsibleEmployeeId()))) {
+
+            throw new ResponsibleEmployeeAlreadyAssignedException(
+                    dto.responsibleEmployeeId()
+            );
+        }
+
         // Check whether the project manager exists
         qualificationService.validateEmployee(dto.responsibleEmployeeId());
 
