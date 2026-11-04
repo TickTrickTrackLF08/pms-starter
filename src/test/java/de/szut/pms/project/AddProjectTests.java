@@ -1,11 +1,11 @@
 package de.szut.pms.project;
 
 import de.szut.pms.common.ResourceNotFoundException;
+import de.szut.pms.employee.EmployeeServiceNotAvailableException;
 import de.szut.pms.employee.EmployeeDto;
 import de.szut.pms.employee.SkillDto;
 import de.szut.pms.projectemployee.ProjectEmployee;
 import de.szut.pms.testcontainers.AbstractIntegrationTest;
-import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
