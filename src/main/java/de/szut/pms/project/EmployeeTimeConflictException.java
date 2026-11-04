@@ -13,11 +13,11 @@ public class EmployeeTimeConflictException extends RuntimeException {
 
         super(
                 (givenProjectId == null
-                        ? "Bei dem neuen Projekt"
-                        : "In deinem Projekt mit der ID " + givenProjectId)
-                        + " überschneidet sich mindestens ein Mitarbeiter mit dem Projekt "
+                        ? "For the new project"
+                        : "In your project with the ID " + givenProjectId)
+                        + " At least one employee is involved in the project "
                         + projectId
-                        + ". Mitarbeiter-ID: " + employeeId + "."
+                        + ". Employee ID: " + employeeId + "."
         );
     }
 }

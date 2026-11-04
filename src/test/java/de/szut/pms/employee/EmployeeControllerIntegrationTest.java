@@ -41,7 +41,7 @@ public class EmployeeControllerIntegrationTest extends AbstractIntegrationTest {
         pe.setProject(project);              // Set the owning side, otherwise project_id stays null
         pe.setEmployeeId(employeeId);
         pe.setQualificationID(1L);
-        project.getEmployee().add(pe);
+        project.getEmployees().add(pe);
 
         return projectRepository.save(project);
     }

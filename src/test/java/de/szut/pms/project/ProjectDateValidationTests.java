@@ -21,7 +21,7 @@ public class ProjectDateValidationTests extends AbstractIntegrationTest {
     private final String validRequest = """
         {
           "description": "Testprojekt für Datumsvalidierung",
-          "responsibleEmployeeId": 12,
+          "responsibleEmployeeId": 1,
           "customerId": 5,
           "customerServiceRepresentative": "Anna Müller",
           "comment": "Test",
@@ -38,14 +38,9 @@ public class ProjectDateValidationTests extends AbstractIntegrationTest {
 
     @BeforeEach
     void setup() {
-        when(employeeClient.findById(12L)).thenReturn(new EmployeeDto(
-                12L,
-                "Mustermann",
-                "Max",
-                "",
-                "",
-                "",
-                "",
+        when(employeeClient.findById(1L)).thenReturn(new EmployeeDto(
+                1L,
+                "Mustermann", "Erika", "", "", "", "",
                 List.of(new SkillDto("Qualifikation 3", 3L))));
     }
 

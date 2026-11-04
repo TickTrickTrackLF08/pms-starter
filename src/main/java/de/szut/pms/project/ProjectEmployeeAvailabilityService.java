@@ -28,17 +28,17 @@ public class ProjectEmployeeAvailabilityService {
 
             for (Project project : projects) {
 
-                // Aktuelles Projekt ausschließen
+                // Exclude Current Project
                 if (isSameProject(project, givenProject)) {
                     continue;
                 }
 
-                // Projekte ohne zeitliche Überschneidung überspringen
+                // Skip projects that do not overlap in time
                 if (!timeOverlaps(project, givenProject)) {
                     continue;
                 }
 
-                // Prüfen, ob der Mitarbeiter bereits im anderen Projekt arbeitet
+                // Check whether the employee is already working on the other project
                 boolean employeeAlreadyAssigned = project.getEmployees()
                         .stream()
                         .anyMatch(projectEmployee ->

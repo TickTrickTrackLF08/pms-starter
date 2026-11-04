@@ -78,12 +78,9 @@ public class ProjectController {
                         """)
             )
     )
-    @ApiResponse(responseCode = "409", description = "Ein Mitarbeiter besitzt nicht die erforderliche Qualifikation")
-    @ApiResponse(responseCode = "503", description = "Der Employee-Service ist nicht erreichbar")
-    @ApiResponse(
-            responseCode = "503",
-            description = "The Employee Service is unavailable"
-    )
+
+
+    @ApiResponse(responseCode = "503", description = "The Employee Service is unavailable")
     @ApiResponse(responseCode = "409", description="An employee does not have the required qualifications or at least one employee is already assigned to another project during the specified time period")
     @PostMapping
     public ResponseEntity<ProjectDTO> create(@RequestBody @Valid CreateProjectDTO dto) {
@@ -304,8 +301,8 @@ public class ProjectController {
     @Operation(summary = "Add an employee to a project")
     @ApiResponse(responseCode = "200", description = "Employee successfully added")
     @ApiResponse(responseCode = "404", description = "Project or employee not found")
-    @ApiResponse(responseCode = "400", description = "Invalid request or employee already assigned")
-    @ApiResponse(responseCode = "409", description = "The employee is assigned to another project during that period.")
+    @ApiResponse(responseCode = "400", description = "Invalid request: missing employeeId or qualificationID")
+    @ApiResponse(responseCode = "409", description = "The employee is assigned to another project during that period, or already assigned to this project, or does not have the required qualification")
     @ApiResponse(responseCode = "503", description = "The Employee Service is unavailable.")
     @PostMapping("/{projectId}/employees")
     public ResponseEntity<ProjectDTO> addEmployeeToProject(
