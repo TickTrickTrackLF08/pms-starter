@@ -202,33 +202,11 @@ public class ProjectService {
                 dto.responsibleEmployeeId()
         );
 
-        // Prüfen, ob sich der Projektzeitraum verändert hat
-        boolean datesChanged =
-                !project.getStartDate().equals(dto.startDate())
-                        || !project.getEndDate().equals(dto.endDate());
-
-        if (datesChanged) {
-
-            // Alle bereits zugeordneten Mitarbeiter prüfen
-            for (ProjectEmployee employee : project.getEmployee()) {
-
-                boolean overlapping = repository.existsOverlappingProject(
-                        employee.getEmployeeId(),
-                        id,
-                        dto.startDate(),
-                        dto.endDate()
-                );
-
-                if (overlapping) {
-                    throw new ProjectTimeOverlapException(
-                            employee.getEmployeeId()
-                    );
-                }
-            }
-        }
-
         // Projektdaten aktualisieren
         mapper.updateEntity(project, dto);
+
+        // Verfügbarkeit mit den aktualisierten Daten prüfen
+        availabilityService.validateNoTimeOverlap(project);
 
         Project updated = repository.save(project);
 
