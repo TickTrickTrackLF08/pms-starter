@@ -152,7 +152,7 @@ public class ProjectService {
             throw new ProjectEmployeeNotFoundException(projectId, employeeId);
         }
         repository.save(project);
-        return mapper.toRemoveEmployeeDTO(project);
+        return mapper.toProjectEmployeesDTO(project);
     }
 
     //Transaction is necessary because the mapper reads the LAZY-loaded employee list; without an open session, a LazyInitializationException would occur.
@@ -182,6 +182,11 @@ public class ProjectService {
             );
         }
 
+        // The project manager must not also be a project employee
+        if (dto.employeeId().equals(project.getResponsibleEmployeeId())) {
+            throw new ResponsibleEmployeeAlreadyAssignedException(dto.employeeId());
+        }
+
         // Check whether the employee exists and has the specified qualification
         qualificationService.validateQualification(
                 dto.employeeId(),
@@ -207,6 +212,12 @@ public class ProjectService {
 
         Project project = repository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException(id));
+
+        // The new project manager must not already be a project employee
+        boolean managerIsEmployee = project.getEmployees().stream().anyMatch(employee -> employee.getEmployeeId().equals(dto.responsibleEmployeeId()));
+        if (managerIsEmployee) {
+            throw new ResponsibleEmployeeAlreadyAssignedException(dto.responsibleEmployeeId());
+        }
 
         // Verify customer
         if (!customerClient.existsById(dto.customerId())) {

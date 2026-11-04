@@ -130,7 +130,7 @@ public class ProjectController {
                           "detail": "There is no project entry with the ID 99.",
                           "instance": "/projects/99/employees",
                           "status": 404,
-                          "title": "Not Found"
+                          "title": "Not found"
                         }
                         """)
             )
@@ -179,7 +179,7 @@ public class ProjectController {
                           "detail": "There is no project entry with the ID 99.",
                           "instance": "/projects/99",
                           "status": 404,
-                          "title": "Not Found"
+                          "title": "Not found"
                         }
                         """)
             )
@@ -234,8 +234,15 @@ public class ProjectController {
 
 
     @Operation(summary = "Delete a project")
-    @ApiResponse(responseCode = "204", description = "Project successfully deleted")
-    @ApiResponse(responseCode = "404", description = "Project not found")
+    @ApiResponse(responseCode = "204", description = "Project successfully deleted (no response body)")
+    @ApiResponse(responseCode = "404", description = "Project not found", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class), examples = @ExampleObject(value = """
+                {
+                  "detail": "There is no project entry with the ID 99.",
+                  "instance": "/projects/99",
+                  "status": 404,
+                  "title": "Not found"
+                }
+                """)))
     @ApiResponse(responseCode = "401", description = "Invalid JWT")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
@@ -271,7 +278,7 @@ public class ProjectController {
                           "detail": "There is no employee with the ID 2 in the project with the ID 1.",
                           "instance": "/projects/1/employees/2",
                           "status": 404,
-                          "title": "Not Found"
+                          "title": "Not found"
                         }
                         """)
             )
@@ -285,10 +292,43 @@ public class ProjectController {
 
 
     @Operation(summary = "Update the details of a project")
-    @ApiResponse(responseCode = "200", description = "Project Successfully Updated")
-    @ApiResponse(responseCode = "404", description = "Project or referenced resource not found")
-    @ApiResponse(responseCode = "409", description = "During this period, the employee will be assigned to another project.")
-    @ApiResponse(responseCode = "503", description = "The Employee Service is unavailable.")
+    @ApiResponse(responseCode = "200", description = "Project successfully updated", content = @Content(
+            mediaType = "application/json", schema = @Schema(implementation = ProjectDTO.class),  examples = @ExampleObject(value = """
+                {
+                  "id": 1,
+                  "description": "Website relaunch phase 2",
+                  "responsibleEmployeeId": 1,
+                  "customerId": 5,
+                  "customerServiceRepresentative": "Maxi David",
+                  "comment": "Extended scope",
+                  "startDate": "2026-11-01",
+                  "endDate": "2027-03-31",
+                  "projectEmployees": [
+                    { "id": 1, "employeeId": 2, "qualificationID": 2 }
+                  ]
+                }
+                """)))
+    @ApiResponse(responseCode = "400", description = "Invalid input end date before start date, or the new project manager is already a project employee", content = @Content(
+            mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class), examples = @ExampleObject(value = """
+                {
+                  "detail": "The request contains invalid fields",
+                  "instance": "/projects/1",
+                  "status": 400,
+                  "title": "Invalid input",
+                  "errors": { "projectDates": "The start date must be before the end date." }
+                }
+                """)))
+    @ApiResponse(responseCode = "404", description = "Project or referenced resource not found", content = @Content(
+            mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class), examples = @ExampleObject(value = """
+                {
+                  "detail": "There is no project entry with the ID 99.",
+                  "instance": "/projects/99",
+                  "status": 404,
+                  "title": "Not found"
+                }
+                """)))
+    @ApiResponse(responseCode = "409", description = "During this period, the employee will be assigned to another project.", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+    @ApiResponse(responseCode = "503", description = "The Employee Service is unavailable.", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
     @PutMapping("/{id}")
     public ResponseEntity<ProjectDTO> update(
             @PathVariable Long id,
@@ -299,11 +339,43 @@ public class ProjectController {
 
 
     @Operation(summary = "Add an employee to a project")
-    @ApiResponse(responseCode = "200", description = "Employee successfully added")
-    @ApiResponse(responseCode = "404", description = "Project or employee not found")
-    @ApiResponse(responseCode = "400", description = "Invalid request: missing employeeId or qualificationID")
-    @ApiResponse(responseCode = "409", description = "The employee is assigned to another project during that period, or already assigned to this project, or does not have the required qualification")
-    @ApiResponse(responseCode = "503", description = "The Employee Service is unavailable.")
+    @ApiResponse(responseCode = "200", description = "Employee successfully added", content = @Content(
+            mediaType = "application/json", schema = @Schema(implementation = ProjectDTO.class), examples = @ExampleObject(value = """
+                {
+                  "id": 1,
+                  "description": "Website relaunch",
+                  "responsibleEmployeeId": 1,
+                  "customerId": 5,
+                  "customerServiceRepresentative": "Anna Müller",
+                  "comment": "New corporate website",
+                  "startDate": "2026-11-01",
+                  "endDate": "2027-02-28",
+                  "projectEmployees": [
+                    { "id": 1, "employeeId": 2, "qualificationID": 2 },
+                    { "id": 2, "employeeId": 12, "qualificationID": 3 }
+                  ]
+                }
+                """)))
+    @ApiResponse(responseCode = "404", description = "Project or employee not found", content = @Content(
+            mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class), examples = @ExampleObject(value = """
+                {
+                  "detail": "Employee with ID 99 not found",
+                  "instance": "/projects/1/employees",
+                  "status": 404,
+                  "title": "Not found"
+                }
+                """)))
+    @ApiResponse(responseCode = "400", description = "Invalid request: missing employeeId or qualificationID", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
+    @ApiResponse(responseCode = "409", description = "The employee is assigned to another project during that period, or already assigned to this project, or does not have the required qualification", content = @Content(
+            mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class), examples = @ExampleObject(value = """
+                {
+                  "detail": "The Employee 12 holds the qualification with the ID 5 not!",
+                  "instance": "/projects/1/employees",
+                  "status": 409,
+                  "title": "Lack of Qualifications"
+                }
+                """)))
+    @ApiResponse(responseCode = "503", description = "The Employee Service is unavailable.", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = ProblemDetail.class)))
     @PostMapping("/{projectId}/employees")
     public ResponseEntity<ProjectDTO> addEmployeeToProject(
             @PathVariable Long projectId,

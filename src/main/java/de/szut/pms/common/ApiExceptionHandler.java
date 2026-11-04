@@ -1,12 +1,9 @@
 package de.szut.pms.common;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import de.szut.pms.customer.CustomerNotFoundException;
-import de.szut.pms.project.ProjectNotFoundException;
 import de.szut.pms.employee.EmployeeServiceNotAvailableException;
+import de.szut.pms.employee.QualificationMissingException;
 import de.szut.pms.project.EmployeeTimeConflictException;
 import de.szut.pms.project.ResponsibleEmployeeAlreadyAssignedException;
 import de.szut.pms.projectemployee.EmployeeAlreadyAssignedException;
@@ -14,11 +11,9 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import de.szut.pms.employee.QualificationMissingException;
 
 /**
  * Zentrale Übersetzung von Ausnahmen in HTTP-Antworten nach RFC 9457
@@ -70,14 +65,6 @@ public class ApiExceptionHandler {
         return problem;
     }
 
-    @ExceptionHandler(ProjectNotFoundException.class)
-    public ProblemDetail handleProjectNotFound(ProjectNotFoundException ex) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problem.setTitle("Project not found");
-        return problem;
-    }
-
-
     @ExceptionHandler(QualificationMissingException.class)
     public ProblemDetail handleQualificationMissing(QualificationMissingException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
@@ -113,30 +100,11 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(ResponsibleEmployeeAlreadyAssignedException.class)
-    public ResponseEntity<Map<String, Object>> handleResponsibleEmployeeAlreadyAssigned(
-            ResponsibleEmployeeAlreadyAssignedException ex) {
-
-        Map<String, Object> body = new HashMap<>();
-        body.put("status", 400);
-        body.put("error", "Bad Request");
-        body.put("message", ex.getMessage());
-
-        return ResponseEntity.badRequest().body(body);
-        }
-
-
-
-    @ExceptionHandler(CustomerNotFoundException.class)
-    public ResponseEntity<ProblemDetail> handleCustomerNotFound(
-            CustomerNotFoundException exception) {
-
+    public ProblemDetail handleResponsibleEmployeeAlreadyAssigned(ResponsibleEmployeeAlreadyAssignedException  ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-                HttpStatus.NOT_FOUND,
-                exception.getMessage()
-        );
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
+                HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setTitle("Project manager cannot be a project employee");
+        return problem;
     }
-
 }
 

@@ -16,7 +16,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface ValidProjectDates {
 
-    String message() default "Das Startdatum muss vor dem Enddatum liegen.";
+    String message() default "The start date must be before the end date.";
 
     Class<?>[] groups() default {};
 

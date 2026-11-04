@@ -2,6 +2,7 @@ package de.szut.pms.project;
 
 import de.szut.pms.common.ResourceNotFoundException;
 import de.szut.pms.employee.EmployeeDto;
+import de.szut.pms.employee.EmployeeServiceNotAvailableException;
 import de.szut.pms.employee.SkillDto;
 import de.szut.pms.projectemployee.ProjectEmployee;
 import de.szut.pms.testcontainers.AbstractIntegrationTest;
@@ -18,7 +19,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AddEmployeeToProject extends AbstractIntegrationTest {
+class AddEmployeeToProjectTests extends AbstractIntegrationTest {
 
     @BeforeEach
     void setup() {
@@ -128,5 +129,84 @@ class AddEmployeeToProject extends AbstractIntegrationTest {
         return post("/projects/" + projectId + "/employees")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
+    }
+
+    @Test
+    @WithMockUser
+    void addEmployeeToNonExistingProject() throws Exception {
+        mockMvc.perform(addEmployeeRequest(999999L, """
+                { "employeeId": 1, "qualificationID": 3 }
+                """))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    void addEmployeeTwiceReturnsConflict() throws Exception {
+        Project project = createProject();
+        String body = """
+                { "employeeId": 1, "qualificationID": 3 }
+                """;
+
+        mockMvc.perform(addEmployeeRequest(project.getId(), body))
+                .andExpect(status().isOk());
+        mockMvc.perform(addEmployeeRequest(project.getId(), body))
+                .andExpect(status().isConflict());
+
+        Assertions.assertEquals(1, projectEmployeeRepository.count());
+    }
+
+    @Test
+    @WithMockUser
+    void addResponsibleEmployeeAsProjectEmployee() throws Exception {
+        Project project = createProject(); // responsibleEmployeeId = 2
+
+        mockMvc.perform(addEmployeeRequest(project.getId(), """
+                { "employeeId": 2, "qualificationID": 3 }
+                """))
+                .andExpect(status().isBadRequest());
+
+        Assertions.assertEquals(0, projectEmployeeRepository.count());
+    }
+
+    @Test
+    @WithMockUser
+    void addEmployeeWithTimeOverlapReturnsConflict() throws Exception {
+        Project project = createProject(); // 2026-01-01 bis 2026-01-10
+
+        Project other = new Project();
+        other.setDescription("Overlapping project");
+        other.setResponsibleEmployeeId(3L);
+        other.setCustomerId(1L);
+        other.setCustomerServiceRepresentative("Max");
+        other.setStartDate(LocalDate.of(2026, 1, 5));
+        other.setEndDate(LocalDate.of(2026, 1, 15));
+        ProjectEmployee assigned = new ProjectEmployee();
+        assigned.setEmployeeId(1L);
+        assigned.setQualificationID(3L);
+        other.addEmployee(assigned);
+        projectRepository.save(other);
+
+        mockMvc.perform(addEmployeeRequest(project.getId(), """
+                { "employeeId": 1, "qualificationID": 3 }
+                """))
+                .andExpect(status().isConflict());
+
+        Assertions.assertEquals(1, projectEmployeeRepository.count());
+    }
+
+    @Test
+    @WithMockUser
+    void addEmployeeWhenEmployeeServiceIsUnavailable() throws Exception {
+        Project project = createProject();
+        when(employeeClient.findById(1L)).thenThrow(
+                new EmployeeServiceNotAvailableException("Employee Service is down"));
+
+        mockMvc.perform(addEmployeeRequest(project.getId(), """
+                { "employeeId": 1, "qualificationID": 3 }
+                """))
+                .andExpect(status().isServiceUnavailable());
+
+        Assertions.assertEquals(0, projectEmployeeRepository.count());
     }
 }

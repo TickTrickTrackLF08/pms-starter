@@ -28,28 +28,15 @@ public class ProjectMapper {
         dto.setEndDate(entity.getEndDate());
         dto.setStartDate(entity.getStartDate());
         dto.setResponsibleEmployeeId(entity.getResponsibleEmployeeId());
-
-        List<ProjectEmployeeDTO> dtos = new ArrayList<>();
-        for (ProjectEmployee employee : entity.getEmployees()) {
-            dtos.add(projectEmployeeMapper.toDTO(employee));
-        }
-
-        dto.setProjectEmployees(dtos);
-
+        dto.setProjectEmployees(toEmployeeDTOs(entity.getEmployees()));
         return dto;
     }
 
     public ProjectEmployeesDTO toProjectEmployeesDTO(Project entity) {
         ProjectEmployeesDTO dto = new ProjectEmployeesDTO();
-
         dto.setProjectId(entity.getId());
         dto.setDescription(entity.getDescription());
-        List<ProjectEmployeeDTO> dtos = new ArrayList<>();
-        for (ProjectEmployee employee : entity.getEmployees()) {
-            dtos.add(projectEmployeeMapper.toDTO(employee));
-        }
-
-        dto.setEmployees(dtos);
+        dto.setEmployees(toEmployeeDTOs(entity.getEmployees()));
         return dto;
     }
 
@@ -69,7 +56,6 @@ public class ProjectMapper {
         if (dto.projectEmployees() != null) {
             for (CreateProjectEmployeeDTO employeeDTO : dto.projectEmployees()) {
                 ProjectEmployee projectEmployee = new ProjectEmployee();
-
                 projectEmployee.setEmployeeId(employeeDTO.employeeId());
                 projectEmployee.setQualificationID(
                         employeeDTO.qualificationID()
@@ -80,26 +66,6 @@ public class ProjectMapper {
         }
 
         return entity;
-    }
-
-    /**
-     * Maps a project entity to a ProjectEmployeeRemoveDTO.
-     * @param entity the updated project to map
-     * @return a DTO containing the project data and assigned employees,
-     * according to the response criteria (just the id, description and updated employee-list)
-     */
-    public ProjectEmployeesDTO toRemoveEmployeeDTO(Project entity){
-        ProjectEmployeesDTO dto = new ProjectEmployeesDTO();
-
-        dto.setProjectId(entity.getId());
-        dto.setDescription(entity.getDescription());
-
-        List<ProjectEmployeeDTO> dtos = new ArrayList<>();
-        for (ProjectEmployee employee : entity.getEmployees()) {
-            dtos.add(projectEmployeeMapper.toDTO(employee));
-        }
-        dto.setEmployees(dtos);
-        return dto;
     }
 
     public void updateEntity(Project entity, UpdateProjectDTO dto) {
@@ -115,5 +81,13 @@ public class ProjectMapper {
         entity.setComment(dto.comment());
         entity.setStartDate(dto.startDate());
         entity.setEndDate(dto.endDate());
+    }
+
+    private List<ProjectEmployeeDTO> toEmployeeDTOs(List<ProjectEmployee> employees) {
+        List<ProjectEmployeeDTO> dtos = new ArrayList<>();
+        for (ProjectEmployee employee : employees) {
+            dtos.add(projectEmployeeMapper.toDTO(employee));
+        }
+        return dtos;
     }
 }

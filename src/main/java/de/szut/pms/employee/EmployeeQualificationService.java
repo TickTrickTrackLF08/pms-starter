@@ -32,13 +32,7 @@ public class EmployeeQualificationService {
      * Checks whether an employee exists without verifying any qualifications.
      */
     public void validateEmployee(Long employeeId) {
-        EmployeeDto employee = employeeClient.findById(employeeId);
-
-        if (employee == null) {
-            throw new ResourceNotFoundException(
-                    "Employee with ID " + employeeId + " not found"
-            );
-        }
+        employeeClient.findById(employeeId);
     }
 
 }

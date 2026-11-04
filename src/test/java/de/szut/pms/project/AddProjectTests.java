@@ -1,5 +1,6 @@
 package de.szut.pms.project;
 
+import de.szut.pms.common.ResourceNotFoundException;
 import de.szut.pms.employee.EmployeeDto;
 import de.szut.pms.employee.SkillDto;
 import de.szut.pms.projectemployee.ProjectEmployee;
@@ -17,7 +18,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AddProject extends AbstractIntegrationTest {
+class AddProjectTests extends AbstractIntegrationTest {
 
     @Test
     @WithMockUser
@@ -93,30 +94,27 @@ class AddProject extends AbstractIntegrationTest {
 
     @Test
     @WithMockUser
-    void createProjectWithNonExistingResponsibleEmployee() {
-        when(customerClient.existsById(1L)).thenReturn(true);
+    void createProjectWithNonExistingResponsibleEmployee() throws Exception {
         when(employeeClient.findById(99L)).thenThrow(
-                new RuntimeException("Employee with ID 99 not found")
-        );
+                new ResourceNotFoundException("Employee with ID 99 not found"));
 
-        Assertions.assertThrows(ServletException.class, () ->
-                mockMvc.perform(createRequest(projectJson(99L, 1L, null)))
-        );
+        mockMvc.perform(createRequest(projectJson(99L, 1L, null)))
+                .andExpect(status().isNotFound());
+
+        Assertions.assertEquals(0, projectRepository.count());
     }
 
     @Test
     @WithMockUser
-    void createProjectWithNonExistingProjectEmployee() {
-        when(customerClient.existsById(1L)).thenReturn(true);
+    void createProjectWithNonExistingProjectEmployee() throws Exception {
         mockValidEmployee(2L);
-
         when(employeeClient.findById(99L)).thenThrow(
-                new RuntimeException("Employee with ID 99 not found")
-        );
+                new ResourceNotFoundException("Employee with ID 99 not found"));
 
-        Assertions.assertThrows(ServletException.class, () ->
-                mockMvc.perform(createRequest(projectJson(2L, 1L, 99L)))
-        );
+        mockMvc.perform(createRequest(projectJson(2L, 1L, 99L)))
+                .andExpect(status().isNotFound());
+
+        Assertions.assertEquals(0, projectRepository.count());
     }
 
     @Test
@@ -204,4 +202,42 @@ class AddProject extends AbstractIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
     }
+
+    @Test
+    @WithMockUser
+    void createProjectWithMissingQualification() throws Exception {
+        mockDependencies();
+        when(employeeClient.findById(1L)).thenReturn(new EmployeeDto(
+                1L, "Mustermann", "Max", "", "", "", "",
+                List.of(new SkillDto("Qualification 5", 5L))));
+
+        mockMvc.perform(createRequest(projectJson(2L, 1L, 1L)))
+                .andExpect(status().isConflict());
+
+        Assertions.assertEquals(0, projectRepository.count());
+    }
+
+    @Test
+    @WithMockUser
+    void createProjectWithResponsibleEmployeeAsProjectEmployee() throws Exception {
+        mockDependencies();
+
+        mockMvc.perform(createRequest(projectJson(2L, 1L, 2L)))
+                .andExpect(status().isBadRequest());
+
+        Assertions.assertEquals(0, projectRepository.count());
+    }
+
+    @Test
+    @WithMockUser
+    void createProjectWhenEmployeeServiceIsUnavailable() throws Exception {
+        when(employeeClient.findById(1L)).thenThrow(
+                new EmployeeServiceNotAvailableException("Employee Service is down"));
+
+        mockMvc.perform(createRequest(projectJson(2L, 1L, 1L)))
+                .andExpect(status().isServiceUnavailable());
+
+        Assertions.assertEquals(0, projectRepository.count());
+    }
+
 }

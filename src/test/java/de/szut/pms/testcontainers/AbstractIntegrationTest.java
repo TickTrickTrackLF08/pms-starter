@@ -12,6 +12,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 /**
  * Startet einen echten Postgres-Container über Testcontainers und die volle
  * Anwendung. Zum Authentifizieren in Tests nicht Authentik ansprechen —
@@ -44,5 +48,6 @@ public class AbstractIntegrationTest {
     void setUp() {
         projectEmployeeRepository.deleteAll();
         projectRepository.deleteAll();
+        when(customerClient.existsById(any())).thenReturn(true);
     }
 }
