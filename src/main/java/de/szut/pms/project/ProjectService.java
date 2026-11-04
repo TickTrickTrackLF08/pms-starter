@@ -9,6 +9,7 @@ import de.szut.pms.employee.EmployeeQualificationService;
 import de.szut.pms.projectemployee.CreateProjectEmployeeDTO;
 import de.szut.pms.projectemployee.EmployeeAlreadyAssignedException;
 import de.szut.pms.projectemployee.ProjectEmployee;
+import de.szut.pms.projectemployee.ProjectEmployeeService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import de.szut.pms.projectemployee.ProjectEmployeeNotFoundException;
@@ -23,6 +24,8 @@ public class ProjectService {
     private final CustomerClient customerClient;
     private final EmployeeQualificationService qualificationService;
     private final ProjectEmployeeAvailabilityService availabilityService;
+
+
 
     public ProjectService(ProjectRepository repository, ProjectMapper mapper, CustomerClient customerClient, EmployeeQualificationService qualificationService, ProjectEmployeeAvailabilityService availabilityService) {
         this.repository = repository;
@@ -54,8 +57,14 @@ public class ProjectService {
         // Check whether the project manager exists
         qualificationService.validateEmployee(dto.responsibleEmployeeId());
 
-        // Create and save a project
-        Project saved = repository.save(mapper.toEntity(dto));
+        //Create project
+        Project project = mapper.toEntity(dto);
+
+        //Check if employees are available at that time
+        availabilityService.validateNoTimeOverlap(project);
+
+        // Save project
+         Project saved = repository.save(project);
 
         return mapper.toDTO(saved);
     }

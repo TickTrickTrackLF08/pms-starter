@@ -4,6 +4,13 @@ import de.szut.pms.employee.AddProjectEmployeeDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -77,6 +84,7 @@ public class ProjectController {
                         """)
             )
     )
+    @ApiResponse(responseCode = "409", description="Mindestens ein Mitarbeiter ist im angegebenen Zeitraum bereits einem anderen Projekt zugeordnet")
     @PostMapping
     public ResponseEntity<ProjectDTO> create(@RequestBody @Valid CreateProjectDTO dto) {
         ProjectDTO created = service.create(dto);
@@ -240,23 +248,9 @@ public class ProjectController {
     }
 
     @Operation(summary = "Delete a project")
-    @ApiResponse(responseCode = "204", description = "Project deleted successfully", content = @Content)
-    @ApiResponse(
-            responseCode = "404",
-            description = "Project not found",
-            content = @Content(
-                    mediaType = "application/problem+json",
-                    schema = @Schema(implementation = ProblemDetail.class),
-                    examples = @ExampleObject(value = """
-                        {
-                          "detail": "There is no project entry with the ID 99.",
-                          "instance": "/projects/99",
-                          "status": 404,
-                          "title": "Not Found"
-                        }
-                        """)
-            )
-    )
+    @ApiResponse(responseCode = "204", description = "Project successfully deleted")
+    @ApiResponse(responseCode = "404", description = "Project not found")
+    @ApiResponse(responseCode = "401", description = "Invalid JWT")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         service.deleteById(id);
