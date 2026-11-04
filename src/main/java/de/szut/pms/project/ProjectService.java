@@ -9,9 +9,9 @@ import de.szut.pms.employee.EmployeeQualificationService;
 import de.szut.pms.projectemployee.CreateProjectEmployeeDTO;
 import de.szut.pms.projectemployee.EmployeeAlreadyAssignedException;
 import de.szut.pms.projectemployee.ProjectEmployee;
+import de.szut.pms.projectemployee.ProjectEmployeeNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
-import de.szut.pms.projectemployee.ProjectEmployeeNotFoundException;
 
 import java.util.List;
 
@@ -118,7 +118,7 @@ public class ProjectService {
 
 
     @Transactional
-    public ProjectEmployeeRemoveDTO removeEmployee(Long projectId, Long employeeId){
+    public ProjectEmployeesDTO removeEmployee(Long projectId, Long employeeId){
         Project project = repository.findById(projectId)
                 .orElseThrow(()->new ProjectNotFoundException(projectId));
 

@@ -100,17 +100,17 @@ public class ProjectMapper {
     }
 
 
-    public ProjectEmployeeRemoveDTO toRemoveEmployeeDTO(Project entity){
-        ProjectEmployeeRemoveDTO dto = new ProjectEmployeeRemoveDTO();
+    public ProjectEmployeesDTO toRemoveEmployeeDTO(Project entity){
+        ProjectEmployeesDTO dto = new ProjectEmployeesDTO();
 
-        dto.setId(entity.getId());
+        dto.setProjectId(entity.getId());
         dto.setDescription(entity.getDescription());
 
         List<ProjectEmployeeDTO> dtos = new ArrayList<>();
         for (ProjectEmployee employee : entity.getEmployees()) {
             dtos.add(projectEmployeeMapper.toDTO(employee));
         }
-        dto.setProjectEmployees(dtos);
+        dto.setEmployees(dtos);
         return dto;
     }
 

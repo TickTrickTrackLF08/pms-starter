@@ -1,6 +1,7 @@
 package de.szut.pms.project;
 
 import de.szut.pms.employee.AddProjectEmployeeDTO;
+import de.szut.pms.projectemployee.ProjectEmployeeDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -238,7 +239,7 @@ public class ProjectController {
     @Operation(summary = "Remove an employee from a project")
     @ApiResponse(responseCode = "200", description = "Employee removed successfully", content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = ProjectEmployeeRemoveDTO.class),
+                    schema = @Schema(implementation = ProjectEmployeeDTO.class),
                     examples = @ExampleObject(value = """
                         {
                           "id": 1,
@@ -269,8 +270,8 @@ public class ProjectController {
     )
     @ApiResponse(responseCode = "401", description = "Invalider JWT")
     @DeleteMapping("/{projectId}/employees/{employeeId}")
-    public ResponseEntity<ProjectEmployeeRemoveDTO> removeEmployee(@PathVariable Long projectId, @PathVariable Long employeeId) {
-        ProjectEmployeeRemoveDTO projectEmployeeRemoveDTO = service.removeEmployee(projectId, employeeId);
+    public ResponseEntity<ProjectEmployeesDTO> removeEmployee(@PathVariable Long projectId, @PathVariable Long employeeId) {
+        ProjectEmployeesDTO projectEmployeeRemoveDTO = service.removeEmployee(projectId, employeeId);
         return ResponseEntity.ok(projectEmployeeRemoveDTO);
     }
 
