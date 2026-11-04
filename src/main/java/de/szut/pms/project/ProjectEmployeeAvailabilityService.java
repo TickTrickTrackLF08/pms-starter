@@ -33,6 +33,8 @@ public class ProjectEmployeeAvailabilityService {
         }
     }
 
+
+
     private boolean timeOverlaps(Project project, Project givenProject) {
         return  !givenProject.getEndDate().isBefore(project.getStartDate()) &&
                 !project.getEndDate().isBefore(givenProject.getStartDate());
