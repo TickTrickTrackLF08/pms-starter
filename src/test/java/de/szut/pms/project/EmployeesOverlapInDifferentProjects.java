@@ -1,4 +1,4 @@
-package de.szut.pms.IntegrationsTests;
+package de.szut.pms.project;
 
 import de.szut.pms.employee.EmployeeDto;
 import de.szut.pms.employee.SkillDto;
@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-public class MitarbeiterZeitüberschneidungenTests extends AbstractIntegrationTest {
+public class EmployeesOverlapInDifferentProjects extends AbstractIntegrationTest {
     private final String validRequest = """
         {
           "description": "Testprojekt für Zeitüberschneidung",

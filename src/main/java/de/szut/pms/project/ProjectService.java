@@ -118,6 +118,16 @@ public class ProjectService {
     }
 
 
+    /**
+     * Removes an employee from a project.
+     *
+     * @param projectId the ID of the project from which the employee should be removed
+     * @param employeeId the ID of the employee to remove
+     * @return a DTO containing the updated project information and employee list,
+     * according to the response criteria
+     * @throws ProjectNotFoundException if no project with the given ID exists
+     * @throws ProjectEmployeeNotFoundException if the employee is not assigned to the project
+     */
     @Transactional
     public ProjectEmployeeRemoveDTO removeEmployee(Long projectId, Long employeeId){
         Project project = repository.findById(projectId)
