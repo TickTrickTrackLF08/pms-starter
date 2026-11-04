@@ -29,12 +29,8 @@ public class ProjectController {
         this.service = service;
     }
 
-
     @Operation(summary = "Create a new project")
-    @ApiResponse(
-            responseCode = "201",
-            description = "Projekt wurde angelegt",
-            content = @Content(
+    @ApiResponse(responseCode = "201", description = "Projekt wurde angelegt", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ProjectDTO.class),
                     examples = @ExampleObject(value = """
@@ -60,26 +56,23 @@ public class ProjectController {
                             }
                           ]
                         }
-                        """)
-            )
+                    """)
     )
-    @ApiResponse(
-            responseCode = "400",
-            description = "Der Rumpf war fehlerhaft",
-            content = @Content(
+    )
+    @ApiResponse(responseCode = "400", description = "Der Rumpf war fehlerhaft", content = @Content(
                     mediaType = "application/problem+json",
                     examples = @ExampleObject(value = """
-            {
-              "detail": "Die Anfrage enthält ungültige Felder.",
-              "instance": "/projects",
-              "status": 400,
-              "title": "Ungültige Eingabe",
-              "errors": {
-                "startDate": "Das Startdatum muss angegeben werden."
-              }
-            }
-            """)
-            )
+                        {
+                          "detail": "Die Anfrage enthält ungültige Felder.",
+                          "instance": "/projects",
+                          "status": 400,
+                          "title": "Ungültige Eingabe",
+                          "errors": {
+                            "startDate": "Das Startdatum muss angegeben werden."
+                          }
+                        }
+                    """)
+    )
     )
     @PostMapping
     public ResponseEntity<ProjectDTO> create(@RequestBody @Valid CreateProjectDTO dto) {
@@ -92,6 +85,7 @@ public class ProjectController {
         return ResponseEntity.created(location).body(created);
     }
 
+
     @Operation(summary = "Get all employees from a project")
     @ApiResponse(responseCode = "200", description = "Gesuchtes Projekt mit Mitarbeiter erhalten")
     @ApiResponse(responseCode = "400", description = "Fehler in der Anfrage, möglich das die ID keine Zahl ist",content = @Content(mediaType = "application/problem+json"))
@@ -100,6 +94,7 @@ public class ProjectController {
     public ResponseEntity<ProjectEmployeesDTO> getEmployessFromProject(@PathVariable Long id){
         return ResponseEntity.ok().body(service.findAllEmployeesOfProjectOneByID(id));
     }
+
 
     @Operation(summary = "Get all information about a project.")
     @ApiResponse(responseCode = "200", description = "Gesuchtes Projekt erhalten")
@@ -129,6 +124,7 @@ public class ProjectController {
         return ResponseEntity.noContent().build(); //mit .ok() würde 200 returnt
     }
 
+
     @Operation(summary = "Remove an employee from project")
     @ApiResponse(responseCode = "200", description = "Employee successfully removed")
     @ApiResponse(responseCode = "404", description = "Projekt(Id) existiert nicht oder Mitarbeiter ist dem Projekt nicht zugeordnet")
@@ -139,19 +135,12 @@ public class ProjectController {
         return ResponseEntity.ok(projectEmployeeRemoveDTO);
     }
 
+
     @Operation(summary = "Update the details of a project")
-    @ApiResponse(
-            responseCode = "200",
-            description = "Projekt erfolgreich aktualisiert"
-    )
-    @ApiResponse(
-            responseCode = "400",
-            description = "Ungültige Eingabedaten"
-    )
-    @ApiResponse(
-            responseCode = "404",
-            description = "Projekt oder referenzierte Ressource nicht gefunden"
-    )
+    @ApiResponse(responseCode = "200", description = "Projekt erfolgreich aktualisiert")
+    @ApiResponse(responseCode = "400", description = "Ungültige Eingabedaten")
+    @ApiResponse(responseCode = "404", description = "Projekt oder referenzierte Ressource nicht gefunden")
+    @ApiResponse(responseCode = "409", description = "The employee is assigned to another project during that period.")
     @PutMapping("/{id}")
     public ResponseEntity<ProjectDTO> update(
             @PathVariable Long id,
@@ -165,6 +154,7 @@ public class ProjectController {
     @ApiResponse(responseCode = "200", description = "Employee successfully added")
     @ApiResponse(responseCode = "404", description = "Project or employee not found")
     @ApiResponse(responseCode = "400", description = "Invalid request or employee already assigned")
+    @ApiResponse(responseCode = "409", description = "The employee is assigned to another project during that period.")
     @PostMapping("/{projectId}/employees")
     public ResponseEntity<ProjectDTO> addEmployeeToProject(
             @PathVariable Long projectId,
