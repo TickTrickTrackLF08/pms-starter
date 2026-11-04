@@ -2,10 +2,12 @@ package de.szut.pms.project;
 
 import de.szut.pms.customer.CustomerClient;
 import de.szut.pms.customer.CustomerNotFoundException;
+import de.szut.pms.employee.AddProjectEmployeeDTO;
 import de.szut.pms.employee.EmployeeProjectDTO;
 import de.szut.pms.employee.EmployeeProjectsDTO;
 import de.szut.pms.employee.EmployeeQualificationService;
 import de.szut.pms.projectemployee.CreateProjectEmployeeDTO;
+import de.szut.pms.projectemployee.EmployeeAlreadyAssignedException;
 import de.szut.pms.projectemployee.ProjectEmployee;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -20,12 +22,14 @@ public class ProjectService {
     private final ProjectMapper mapper;
     private final CustomerClient customerClient;
     private final EmployeeQualificationService qualificationService;
+    private final ProjectEmployeeAvailabilityService availabilityService;
 
-    public ProjectService(ProjectRepository repository, ProjectMapper mapper, CustomerClient customerClient, EmployeeQualificationService qualificationService) {
+    public ProjectService(ProjectRepository repository, ProjectMapper mapper, CustomerClient customerClient, EmployeeQualificationService qualificationService, ProjectEmployeeAvailabilityService availabilityService) {
         this.repository = repository;
         this.mapper = mapper;
         this.customerClient = customerClient;
         this.qualificationService = qualificationService;
+        this.availabilityService = availabilityService;
     }
 
     @Transactional
@@ -127,6 +131,45 @@ public class ProjectService {
     public ProjectEmployeesDTO findAllEmployeesOfProjectOneByID(Long id) {
         Project project =  repository.findById(id).orElseThrow(() -> new ProjectNotFoundException(id));
         return mapper.toProjectEmployeesDTO(project);
+    }
+
+    @Transactional
+    public ProjectDTO addEmployeeToProject(Long projectId, AddProjectEmployeeDTO dto) {
+
+        // Prüfen, ob das Projekt existiert
+        Project project = repository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException(projectId));
+
+        // Prüfen, ob Mitarbeiter bereits zugeordnet ist
+        boolean alreadyAssigned = project.getEmployee().stream()
+                .anyMatch(employee ->
+                        employee.getEmployeeId().equals(dto.employeeId()));
+        // Falls der Mitarbeiter bereits zugeordnet ist, wird eine Exception geworfen
+        if (alreadyAssigned) {
+            throw new EmployeeAlreadyAssignedException(
+                    dto.employeeId(),
+                    projectId
+            );
+        }
+
+        // Prüfen ob der Mitarbeiter existiert und die angegebene Qualifikation besitzt
+        qualificationService.validateQualification(
+                dto.employeeId(),
+                dto.qualificationID()
+        );
+
+        ProjectEmployee projectEmployee = new ProjectEmployee();
+        projectEmployee.setEmployeeId(dto.employeeId());
+        projectEmployee.setQualificationID(dto.qualificationID());
+
+        project.addEmployee(projectEmployee);
+
+        // Prüfen ob der Mitarbeiter im Zeitraum des Projekts bereits in einem anderen Projekt arbeitet
+        availabilityService.validateNoTimeOverlap(project);
+
+        Project saved = repository.save(project);
+
+        return mapper.toDTO(saved);
     }
 
     @Transactional

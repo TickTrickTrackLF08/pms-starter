@@ -6,6 +6,8 @@ import java.util.Map;
 import de.szut.pms.project.ProjectNotFoundException;
 import de.szut.pms.employee.EmployeeServiceNotAvailableException;
 import de.szut.pms.project.ProjectTimeOverlapException;
+import de.szut.pms.project.EmployeeTimeConflictException;
+import de.szut.pms.projectemployee.EmployeeAlreadyAssignedException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import de.szut.pms.hello.HelloNotFoundException;
-import org.springframework.web.client.ResourceAccessException;
 import de.szut.pms.employee.QualificationMissingException;
 
 /**
@@ -79,6 +80,24 @@ public class ApiExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
         problem.setTitle("Employee Service nicht erreichbar");
+        return problem;
+    }
+
+    @ExceptionHandler(EmployeeTimeConflictException.class)
+    public ProblemDetail handleProjectsEmployeeOverlap(EmployeeTimeConflictException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Mitarbeiter gleichzeitig in 2 Projekten");
+        return problem;
+    }
+
+    @ExceptionHandler(EmployeeAlreadyAssignedException.class)
+    public ProblemDetail handleEmployeeAlreadyAssigned(EmployeeAlreadyAssignedException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, ex.getMessage());
+
+        problem.setTitle("Mitarbeiter bereits im Projekt zugeordnet");
+
         return problem;
     }
 

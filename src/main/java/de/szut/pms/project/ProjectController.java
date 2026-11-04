@@ -1,5 +1,6 @@
 package de.szut.pms.project;
 
+import de.szut.pms.employee.AddProjectEmployeeDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -157,6 +158,22 @@ public class ProjectController {
             @RequestBody @Valid UpdateProjectDTO dto
     ) {
         return ResponseEntity.ok(service.update(id, dto));
+    }
+
+
+    @Operation(summary = "Add an employee to a project")
+    @ApiResponse(responseCode = "200", description = "Employee successfully added")
+    @ApiResponse(responseCode = "404", description = "Project or employee not found")
+    @ApiResponse(responseCode = "400", description = "Invalid request or employee already assigned")
+    @PostMapping("/{projectId}/employees")
+    public ResponseEntity<ProjectDTO> addEmployeeToProject(
+            @PathVariable Long projectId,
+            @RequestBody @Valid AddProjectEmployeeDTO dto) {
+
+        ProjectDTO updatedProject =
+                service.addEmployeeToProject(projectId, dto);
+
+        return ResponseEntity.ok(updatedProject);
     }
 
 }
