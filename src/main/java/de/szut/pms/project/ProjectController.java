@@ -84,6 +84,14 @@ public class ProjectController {
                         """)
             )
     )
+    @ApiResponse(
+            responseCode = "409",
+            description = "Ein Mitarbeiter besitzt nicht die erforderliche Qualifikation"
+    )
+    @ApiResponse(
+            responseCode = "503",
+            description = "Der Employee-Service ist nicht erreichbar"
+    )
     @ApiResponse(responseCode = "409", description="Mindestens ein Mitarbeiter ist im angegebenen Zeitraum bereits einem anderen Projekt zugeordnet")
     @PostMapping
     public ResponseEntity<ProjectDTO> create(@RequestBody @Valid CreateProjectDTO dto) {

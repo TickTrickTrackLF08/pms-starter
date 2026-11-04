@@ -2,6 +2,7 @@ package de.szut.pms.testcontainers;
 
 import de.szut.pms.employee.EmployeeClient;
 import de.szut.pms.project.ProjectRepository;
+import de.szut.pms.project.ProjectService;
 import de.szut.pms.projectemployee.ProjectEmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +33,13 @@ public class AbstractIntegrationTest {
     @MockitoBean
     protected EmployeeClient employeeClient;
 
+
+    @Autowired
+    protected ProjectService projectService;
+
     @BeforeEach
     void setUp() {
         projectEmployeeRepository.deleteAll();
         projectRepository.deleteAll();
     }
-
-
 }
