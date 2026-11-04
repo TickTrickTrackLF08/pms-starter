@@ -2,7 +2,6 @@ package de.szut.pms.project;
 
 import de.szut.pms.customer.CustomerClient;
 import de.szut.pms.customer.CustomerNotFoundException;
-import de.szut.pms.employee.AddProjectEmployeeDTO;
 import de.szut.pms.employee.EmployeeProjectDTO;
 import de.szut.pms.employee.EmployeeProjectsDTO;
 import de.szut.pms.employee.EmployeeQualificationService;
@@ -144,7 +143,7 @@ public class ProjectService {
     }
 
     @Transactional
-    public ProjectDTO addEmployeeToProject(Long projectId, AddProjectEmployeeDTO dto) {
+    public ProjectDTO addEmployeeToProject(Long projectId, CreateProjectEmployeeDTO dto) {
 
         // Prüfen, ob das Projekt existiert
         Project project = repository.findById(projectId)

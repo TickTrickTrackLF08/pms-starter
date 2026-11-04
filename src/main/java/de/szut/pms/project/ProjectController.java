@@ -1,6 +1,6 @@
 package de.szut.pms.project;
 
-import de.szut.pms.employee.AddProjectEmployeeDTO;
+import de.szut.pms.projectemployee.CreateProjectEmployeeDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -335,7 +335,7 @@ public class ProjectController {
     @PostMapping("/{projectId}/employees")
     public ResponseEntity<ProjectDTO> addEmployeeToProject(
             @PathVariable Long projectId,
-            @RequestBody @Valid AddProjectEmployeeDTO dto) {
+            @RequestBody @Valid CreateProjectEmployeeDTO dto) {
 
         ProjectDTO updatedProject =
                 service.addEmployeeToProject(projectId, dto);
