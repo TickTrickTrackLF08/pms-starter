@@ -132,24 +132,47 @@ public class ProjectService {
     @Transactional
     public ProjectDTO update(Long id, UpdateProjectDTO dto) {
 
-        // Prüfen, ob das Projekt existiert
         Project project = repository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException(id));
 
-        // Prüfen, ob der Kunde existiert
+        // Kunde prüfen
         if (!customerClient.existsById(dto.customerId())) {
             throw new CustomerNotFoundException(dto.customerId());
         }
 
-        // Prüfen, ob der verantwortliche Mitarbeiter existiert
+        // Projektleiter prüfen
         qualificationService.validateEmployee(
                 dto.responsibleEmployeeId()
         );
 
+        // Prüfen, ob sich der Projektzeitraum verändert hat
+        boolean datesChanged =
+                !project.getStartDate().equals(dto.startDate())
+                        || !project.getEndDate().equals(dto.endDate());
+
+        if (datesChanged) {
+
+            // Alle bereits zugeordneten Mitarbeiter prüfen
+            for (ProjectEmployee employee : project.getEmployee()) {
+
+                boolean overlapping = repository.existsOverlappingProject(
+                        employee.getEmployeeId(),
+                        id,
+                        dto.startDate(),
+                        dto.endDate()
+                );
+
+                if (overlapping) {
+                    throw new ProjectTimeOverlapException(
+                            employee.getEmployeeId()
+                    );
+                }
+            }
+        }
+
         // Projektdaten aktualisieren
         mapper.updateEntity(project, dto);
 
-        // Projekt speichern
         Project updated = repository.save(project);
 
         return mapper.toDTO(updated);

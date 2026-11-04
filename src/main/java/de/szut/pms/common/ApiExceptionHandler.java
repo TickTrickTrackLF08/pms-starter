@@ -5,6 +5,7 @@ import java.util.Map;
 
 import de.szut.pms.project.ProjectNotFoundException;
 import de.szut.pms.employee.EmployeeServiceNotAvailableException;
+import de.szut.pms.project.ProjectTimeOverlapException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -78,6 +79,14 @@ public class ApiExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
         problem.setTitle("Employee Service nicht erreichbar");
+        return problem;
+    }
+
+    @ExceptionHandler(ProjectTimeOverlapException.class)
+    public ProblemDetail handleProjectTimeOverlap(ProjectTimeOverlapException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Zeitliche Projektüberschneidung");
         return problem;
     }
 }
