@@ -5,15 +5,13 @@ import de.szut.pms.employee.EmployeeDto;
 import de.szut.pms.employee.SkillDto;
 import de.szut.pms.projectemployee.ProjectEmployee;
 import de.szut.pms.testcontainers.AbstractIntegrationTest;
-import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-
+import de.szut.pms.employee.EmployeeServiceNotAvailableException;
 import java.time.LocalDate;
 import java.util.List;
-
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
