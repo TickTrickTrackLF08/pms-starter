@@ -40,9 +40,16 @@ public class EmployeesOverlapInDifferentProjectsTests extends AbstractIntegratio
 
     @BeforeEach
     void setup() {
+        // Project lead
         when(employeeClient.findById(1L)).thenReturn(new EmployeeDto(
                 1L,
-                "Mustermann", "Erika", "", "", "", "",
+                "Musterfrau", "Erika", "", "", "", "",
+                List.of()));
+
+        // Project employee 
+        when(employeeClient.findById(12L)).thenReturn(new EmployeeDto(
+                12L,
+                "Mustermann", "Max", "", "", "", "",
                 List.of(new SkillDto("Qualifikation 3", 3L))));
     }
 
