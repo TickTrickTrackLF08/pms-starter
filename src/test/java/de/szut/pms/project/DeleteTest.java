@@ -33,7 +33,7 @@ public class DeleteTest extends AbstractIntegrationTest {
         employee.setProject(project);
         employee.setEmployeeId(3L);
         employee.setQualificationID(2L);
-        project.getEmployee().add(employee);
+        project.getEmployees().add(employee);
         project = projectRepository.save(project);
 
         mockMvc.perform(delete("/projects/{id}",  project.getId()).with(csrf())).andExpect(status().isNoContent());
@@ -65,12 +65,12 @@ public class DeleteTest extends AbstractIntegrationTest {
         employee1.setProject(project);
         employee1.setEmployeeId(1L);
         employee1.setQualificationID(2L);
-        project.getEmployee().add(employee1);
+        project.getEmployees().add(employee1);
         ProjectEmployee employee2 = new ProjectEmployee();
         employee2.setProject(project);
         employee2.setEmployeeId(2L);
         employee2.setQualificationID(3L);
-        project.getEmployee().add(employee2);
+        project.getEmployees().add(employee2);
         project = projectRepository.save(project);
 
         Long IdToBeDeleted = 1L; //the first employee
@@ -111,7 +111,7 @@ public class DeleteTest extends AbstractIntegrationTest {
         employee.setProject(project);
         employee.setEmployeeId(1L);
         employee.setQualificationID(2L);
-        project.getEmployee().add(employee);
+        project.getEmployees().add(employee);
         project = projectRepository.save(project);
 
         mockMvc.perform(delete("/projects/{projectId}/employees/{employeeId}",

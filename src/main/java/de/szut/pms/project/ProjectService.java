@@ -9,7 +9,6 @@ import de.szut.pms.employee.EmployeeQualificationService;
 import de.szut.pms.projectemployee.CreateProjectEmployeeDTO;
 import de.szut.pms.projectemployee.EmployeeAlreadyAssignedException;
 import de.szut.pms.projectemployee.ProjectEmployee;
-import de.szut.pms.projectemployee.ProjectEmployeeService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import de.szut.pms.projectemployee.ProjectEmployeeNotFoundException;
@@ -98,7 +97,7 @@ public class ProjectService {
 
         List<EmployeeProjectDTO> projects = repository.findByEmployeeId(employeeId).stream()
                 .map(project -> {
-                    Long qualificationId = project.getEmployee().stream()
+                    Long qualificationId = project.getEmployees().stream()
                             .filter(pe -> pe.getEmployeeId().equals(employeeId))
                             .map(ProjectEmployee::getQualificationID)
                             .findFirst()
@@ -124,14 +123,14 @@ public class ProjectService {
                 .orElseThrow(()->new ProjectNotFoundException(projectId));
 
         ProjectEmployee deleteEmployee = null;
-        for(ProjectEmployee employee: project.getEmployee()){
+        for(ProjectEmployee employee: project.getEmployees()){
             if(employeeId.equals(employee.getEmployeeId())){
                 deleteEmployee = employee;
                 break;
             }
         }
         if(deleteEmployee != null){
-            project.getEmployee().remove(deleteEmployee);
+            project.getEmployees().remove(deleteEmployee);
         }else{
             throw new ProjectEmployeeNotFoundException(projectId, employeeId);
         }
@@ -155,7 +154,7 @@ public class ProjectService {
                 .orElseThrow(() -> new ProjectNotFoundException(projectId));
 
         // Prüfen, ob Mitarbeiter bereits zugeordnet ist
-        boolean alreadyAssigned = project.getEmployee().stream()
+        boolean alreadyAssigned = project.getEmployees().stream()
                 .anyMatch(employee ->
                         employee.getEmployeeId().equals(dto.employeeId()));
         // Falls der Mitarbeiter bereits zugeordnet ist, wird eine Exception geworfen

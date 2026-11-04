@@ -19,7 +19,7 @@ public class ProjectEmployeeAvailabilityService {
 
         List<Project> projects = repository.findAll();
 
-        for (ProjectEmployee employee : givenProject.getEmployee()) {
+        for (ProjectEmployee employee : givenProject.getEmployees()) {
 
             for (Project project : projects) {
 
@@ -34,7 +34,7 @@ public class ProjectEmployeeAvailabilityService {
                 }
 
                 // Prüfen, ob der Mitarbeiter bereits im anderen Projekt arbeitet
-                boolean employeeAlreadyAssigned = project.getEmployee()
+                boolean employeeAlreadyAssigned = project.getEmployees()
                         .stream()
                         .anyMatch(projectEmployee ->
                                 isSameEmployee(projectEmployee, employee));

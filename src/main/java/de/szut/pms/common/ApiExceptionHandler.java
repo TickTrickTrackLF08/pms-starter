@@ -38,14 +38,31 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidation(MethodArgumentNotValidException ex) {
+
         Map<String, String> errors = new LinkedHashMap<>();
+
         ex.getBindingResult().getFieldErrors().forEach(
-                error -> errors.put(error.getField(), error.getDefaultMessage()));
+                error -> errors.put(
+                        error.getField(),
+                        error.getDefaultMessage()
+                )
+        );
+
+        ex.getBindingResult().getGlobalErrors().forEach(
+                error -> errors.put(
+                        "projectDates",
+                        error.getDefaultMessage()
+                )
+        );
 
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-                HttpStatus.BAD_REQUEST, "The request contains invalid fields");
+                HttpStatus.BAD_REQUEST,
+                "The request contains invalid fields"
+        );
+
         problem.setTitle("Invalid input");
         problem.setProperty("errors", errors);
+
         return problem;
     }
 

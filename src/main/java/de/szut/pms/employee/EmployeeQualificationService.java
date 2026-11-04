@@ -73,6 +73,6 @@ public class EmployeeQualificationService {
      * @param project the project to be created
      */
     public void validateEmployees(Project project) {
-        validateEmployees(project.getEmployee());
+        validateEmployees(project.getEmployees());
     }
 }

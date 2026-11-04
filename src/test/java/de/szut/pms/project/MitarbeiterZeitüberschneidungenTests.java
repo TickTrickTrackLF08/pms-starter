@@ -71,7 +71,7 @@ public class MitarbeiterZeitüberschneidungenTests extends AbstractIntegrationTe
         employee.setEmployeeId(12L);
         employee.setQualificationID(3L);
 
-        existingProject.getEmployee().add(employee);
+        existingProject.getEmployees().add(employee);
 
         projectRepository.save(existingProject);
 
@@ -102,7 +102,7 @@ public class MitarbeiterZeitüberschneidungenTests extends AbstractIntegrationTe
         employee.setEmployeeId(12L);
         employee.setQualificationID(3L);
 
-        existingProject.getEmployee().add(employee);
+        existingProject.getEmployees().add(employee);
 
         projectRepository.save(existingProject);
 
@@ -133,7 +133,7 @@ public class MitarbeiterZeitüberschneidungenTests extends AbstractIntegrationTe
         employee.setEmployeeId(12L);
         employee.setQualificationID(3L);
 
-        existingProject.getEmployee().add(employee);
+        existingProject.getEmployees().add(employee);
 
         projectRepository.save(existingProject);
 
@@ -164,7 +164,7 @@ public class MitarbeiterZeitüberschneidungenTests extends AbstractIntegrationTe
         employee.setEmployeeId(12L);
         employee.setQualificationID(3L);
 
-        existingProject.getEmployee().add(employee);
+        existingProject.getEmployees().add(employee);
 
         projectRepository.save(existingProject);
 
@@ -195,7 +195,7 @@ public class MitarbeiterZeitüberschneidungenTests extends AbstractIntegrationTe
         employee.setEmployeeId(12L);
         employee.setQualificationID(3L);
 
-        existingProject.getEmployee().add(employee);
+        existingProject.getEmployees().add(employee);
 
         projectRepository.save(existingProject);
 
@@ -226,7 +226,7 @@ public class MitarbeiterZeitüberschneidungenTests extends AbstractIntegrationTe
         employee.setEmployeeId(12L);
         employee.setQualificationID(3L);
 
-        existingProject.getEmployee().add(employee);
+        existingProject.getEmployees().add(employee);
 
         projectRepository.save(existingProject);
 
@@ -257,7 +257,7 @@ public class MitarbeiterZeitüberschneidungenTests extends AbstractIntegrationTe
         employee.setEmployeeId(12L);
         employee.setQualificationID(3L);
 
-        existingProject.getEmployee().add(employee);
+        existingProject.getEmployees().add(employee);
 
         projectRepository.save(existingProject);
 

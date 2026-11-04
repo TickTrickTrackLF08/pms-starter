@@ -6,20 +6,20 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Setter
 @Getter
+@Setter
 @JsonPropertyOrder({
         "id",
         "description",
-        "comment",
+        "responsibleEmployeeId",
         "customerId",
         "customerServiceRepresentative",
+        "comment",
         "startDate",
-        "endDate",
-        "responsibleEmployeeId",
+        "endDate"
 })
-
 public class ProjectOverviewDTO {
+
     private Long id;
     private String description;
     private Long responsibleEmployeeId;

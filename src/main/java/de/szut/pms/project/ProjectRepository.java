@@ -12,7 +12,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     // Finds all projects assigned to a specific employee.
     @Query("""
            SELECT p FROM Project p
-           JOIN p.employee pe
+           JOIN p.employees pe
            WHERE pe.employeeId = :employeeId
            """)
     List<Project> findByEmployeeId(@Param("employeeId") Long employeeId);
